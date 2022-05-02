@@ -36,14 +36,16 @@ describe("Batch", () => {
       "A project",
       fakeToken.address,
       1000,
-      10
+      10,
+      []
     );
 
     anotherFakeProject = await new Project__factory(owner).deploy(
       "Another project",
       fakeToken.address,
       1000,
-      10
+      10,
+      []
     );
 
     batch = await new Batch__factory(owner).deploy(

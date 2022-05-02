@@ -42,11 +42,14 @@ contract Project is IProject, ERC165 {
     // has the project been approved by the legal team
     bool public override(IProject) approvedByLegal;
 
+    string[] public blockedRegistryLists;
+
     constructor(
         string memory _description,
         address _token,
         uint256 _saleSupply,
-        uint256 _rate
+        uint256 _rate,
+        string[] memory _blockedCountries
     ) {
         controller = msg.sender;
 
@@ -54,6 +57,13 @@ contract Project is IProject, ERC165 {
         token = _token;
         saleSupply = _saleSupply;
         rate = _rate;
+
+        uint256 len = _blockedCountries.length;
+        for (uint256 i = 0; i < len; i++) {
+            blockedRegistryLists.push(
+                string(abi.encodePacked("residency_", _blockedCountries[i]))
+            );
+        }
 
         uint256 stakersPoolSupply = saleSupply / 2;
         uint256 peoplesPoolSupply = saleSupply - stakersPoolSupply;
@@ -99,6 +109,15 @@ contract Project is IProject, ERC165 {
         require(!approvedByManager, "already approved by manager");
 
         approvedByManager = true;
+    }
+
+    function getBlockedRegistryLists()
+        external
+        view
+        override(IProject)
+        returns (string[] memory)
+    {
+        return blockedRegistryLists;
     }
 
     /// @inheritdoc IProject

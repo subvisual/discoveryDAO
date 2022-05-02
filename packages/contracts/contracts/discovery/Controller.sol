@@ -3,6 +3,7 @@ pragma solidity =0.8.12;
 
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import {SafeERC20} from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
+import {AccessControl} from "@openzeppelin/contracts/access/AccessControl.sol";
 
 import {IController} from "./interfaces/IController.sol";
 import {IProject} from "./interfaces/IProject.sol";
@@ -77,13 +78,15 @@ contract Controller is IController, AccessControl {
         string calldata _description,
         address _token,
         uint256 _saleSupply,
-        uint256 _rate
+        uint256 _rate,
+        string[] calldata _blockedCountries
     ) external override(IController) {
         IProject project = new Project(
             _description,
             _token,
             _saleSupply,
-            _rate
+            _rate,
+            _blockedCountries
         );
 
         emit ProjectRegistered(address(project));
@@ -133,7 +136,8 @@ contract Controller is IController, AccessControl {
         returns (bool)
     {
         return
-            _hasKYC(_user) &&
+            _hasKYCLiveness(_user) &&
+            _hasKYCFull(_user) &&
             _belongsToDAO(_user) &&
             IStaking(staking).hasStaked(_user);
     }
@@ -148,7 +152,9 @@ contract Controller is IController, AccessControl {
         Batch batch = Batch(projectsToBatches[_project]);
 
         return
-            _hasKYC(_user) &&
+            _hasKYCLiveness(_user) &&
+            _hasKYCFull(_user) &&
+            !_hasKYCBlockedCountry(_project, _user) &&
             _belongsToDAO(_user) &&
             batch.hasVotedForProject(_user, _project);
     }
@@ -162,9 +168,34 @@ contract Controller is IController, AccessControl {
         Batch(batch).setVotingPeriod(start, end);
     }
 
-    function _hasKYC(address _user) internal view returns (bool) {
+    function _hasKYCLiveness(address _user) internal view returns (bool) {
         bytes32 fractalId = FractalRegistry(registry).getFractalId(_user);
         return fractalId != 0;
+    }
+
+    function _hasKYCFull(address _user) internal view returns (bool) {
+        bytes32 fractalId = FractalRegistry(registry).getFractalId(_user);
+        return FractalRegistry(registry).isUserInList(fractalId, "plus");
+    }
+
+    function _hasKYCBlockedCountry(address _project, address _user)
+        internal
+        view
+        returns (bool)
+    {
+        bytes32 fractalId = FractalRegistry(registry).getFractalId(_user);
+        string[] memory blockedRegistryLists = IProject(_project)
+            .getBlockedRegistryLists();
+        uint256 len = blockedRegistryLists.length;
+
+        for (uint256 i = 0; i < len; i++) {
+            string memory list = blockedRegistryLists[i];
+            if (FractalRegistry(registry).isUserInList(fractalId, list)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     function _belongsToDAO(address _user) internal view returns (bool) {

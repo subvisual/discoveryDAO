@@ -72,6 +72,7 @@ describe("Controller", () => {
   describe("canInvestInStakersPool", () => {
     it("is true if the user meets all the requirements", async () => {
       await registry.addUserAddress(alice.address, formatBytes32String("id1"));
+      await registry.addUserToList(formatBytes32String("id1"), "plus");
       await citizend.transfer(alice.address, 1000);
       await citizend.connect(alice).approve(staking.address, MaxUint256);
       await staking.connect(alice).stake(100);
@@ -92,6 +93,7 @@ describe("Controller", () => {
 
     it("is false if the user does not belong to the DAO", async () => {
       await registry.addUserAddress(alice.address, formatBytes32String("id1"));
+      await registry.addUserToList(formatBytes32String("id1"), "plus");
       project = await registerProject(owner, projectToken);
 
       expect(await controller.canInvestInStakersPool(alice.address)).to.be
@@ -100,6 +102,7 @@ describe("Controller", () => {
 
     it("is false if the user does not have staked tokens", async () => {
       await registry.addUserAddress(alice.address, formatBytes32String("id1"));
+      await registry.addUserToList(formatBytes32String("id1"), "plus");
       await citizend.transfer(alice.address, 1000);
       project = await registerProject(owner, projectToken);
 
@@ -111,6 +114,7 @@ describe("Controller", () => {
   describe("canInvestInPeoplesPool", () => {
     it("is true if the user meets all the requirements", async () => {
       await registry.addUserAddress(alice.address, formatBytes32String("id1"));
+      await registry.addUserToList(formatBytes32String("id1"), "plus");
       await citizend.transfer(alice.address, 1000);
       project = await registerProject(owner, projectToken);
       await makeProjectReady(project, projectToken);
@@ -136,6 +140,7 @@ describe("Controller", () => {
 
     it("is false if the user does not belong to the DAO", async () => {
       await registry.addUserAddress(alice.address, formatBytes32String("id1"));
+      await registry.addUserToList(formatBytes32String("id1"), "plus");
       project = await registerProject(owner, projectToken);
       await makeProjectReady(project, projectToken);
       const batch: Batch = await setUpBatch(controller, project, owner);
@@ -149,6 +154,7 @@ describe("Controller", () => {
     it("is false if the user hasn't voted in the project", async () => {
       await citizend.transfer(alice.address, 1000);
       await registry.addUserAddress(alice.address, formatBytes32String("id1"));
+      await registry.addUserToList(formatBytes32String("id1"), "plus");
       project = await registerProject(owner, projectToken);
       await makeProjectReady(project, projectToken);
       await setUpBatch(controller, project, owner);
@@ -175,7 +181,8 @@ describe("Controller", () => {
           "My Project",
           projectToken.address,
           parseUnits("1000"),
-          parseUnits("2")
+          parseUnits("2"),
+          []
         )
       ).to.emit(controller, "ProjectRegistered");
     });
@@ -230,7 +237,8 @@ describe("Controller", () => {
       "My Project",
       projectToken.address,
       parseUnits("1000"),
-      parseUnits("2")
+      parseUnits("2"),
+      []
     );
 
     const event = await findEvent(tx, "ProjectRegistered");

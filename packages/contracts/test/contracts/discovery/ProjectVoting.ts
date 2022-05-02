@@ -250,7 +250,8 @@ describe("ProjectVoting", () => {
       name,
       fakeToken.address,
       1000,
-      10
+      10,
+      []
     );
   }
 });

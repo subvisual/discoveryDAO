@@ -25,5 +25,7 @@ interface IProject {
 
     function peoplesPool() external view returns (address);
 
+    function getBlockedRegistryLists() external view returns (string[] memory);
+
     function invest(uint256 _peoplesAmount, uint256 _stakersAmount) external;
 }

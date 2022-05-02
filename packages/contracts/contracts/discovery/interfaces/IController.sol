@@ -18,10 +18,7 @@ interface IController {
     // Checks if a given account has the LEGAL_MANAGER_ROLE role
     /// @param _account Account to check
     /// @return true if account is a legal manager
-    function hasLegalManagerRole(address _account)
-        external
-        view
-        returns (bool);
+    function hasLegalManagerRole(address _account) external view returns (bool);
 
     /// @param _project address of the project
     /// @return Batch address
@@ -44,7 +41,8 @@ interface IController {
         string calldata _description,
         address _token,
         uint256 _saleSupply,
-        uint256 _rate
+        uint256 _rate,
+        string[] calldata _blockedCountries
     ) external;
 
     /// Checks if a project is included in the given batch
