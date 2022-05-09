@@ -1,10 +1,12 @@
 // SPDX-License-Identifier: MIT
 pragma solidity =0.8.12;
 
+import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+
 import {IPool} from "../interfaces/IPool.sol";
 import {RisingTide} from "../../RisingTide/RisingTide.sol";
 
-import "hardhat/console.sol";
+import {Controller} from "../Controller.sol";
 
 /**
  * TODO users should be able to `buy` into the pool, as long as they meet the conditions
@@ -15,6 +17,8 @@ import "hardhat/console.sol";
  */
 abstract contract Pool is IPool, RisingTide {
     address project;
+    address controller;
+    uint256 investedAmount;
 
     /// total unique investors
     uint256 public _investorCount;
@@ -30,13 +34,19 @@ abstract contract Pool is IPool, RisingTide {
     // Total supply of the project's token up for sale
     uint256 public immutable saleSupply;
 
-    constructor(uint256 _saleSupply) {
+    constructor(uint256 _saleSupply, address _controller) {
         project = msg.sender;
         saleSupply = _saleSupply;
+        controller = _controller;
     }
 
     modifier onlyProject() {
         require(msg.sender == project, "not project");
+        _;
+    }
+
+    modifier onlyController() {
+        require(msg.sender == controller, "not controller");
         _;
     }
 
@@ -57,6 +67,13 @@ abstract contract Pool is IPool, RisingTide {
 
         investorBalances[_investor] += _amount;
         totalUncappedAllocations += _amount;
+
+
+        require(
+            IERC20(Controller(controller).paymentToken()).balanceOf(
+                address(this)
+            ) >= investedAmount + _amount
+        );
     }
 
     function setIndividualCap(uint256 _cap) external {

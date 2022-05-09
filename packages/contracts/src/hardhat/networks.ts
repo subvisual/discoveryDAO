@@ -12,6 +12,7 @@ let networks: NetworksUserConfig = {};
 
 networks["hardhat"] = {
   blockGasLimit: 3000000000,
+  allowUnlimitedContractSize: true,
   accounts: { mnemonic: devMnemonic },
 };
 

@@ -25,5 +25,8 @@ interface IProject {
 
     function peoplesPool() external view returns (address);
 
+    /// Returns the pools associated to the project
+    function getPools() external view returns (address, address);
+
     function invest(uint256 _peoplesAmount, uint256 _stakersAmount) external;
 }

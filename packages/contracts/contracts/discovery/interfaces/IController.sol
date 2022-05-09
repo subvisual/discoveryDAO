@@ -36,6 +36,9 @@ interface IController {
     function createBatch(address[] calldata projects, uint256 _slotCount)
         external;
 
+    /// Sets the payment token to be used
+    function setPaymentToken(address _paymentToken) external;
+
     /// Registers a new Project
     function registerProject(
         string calldata _description,
@@ -67,5 +70,18 @@ interface IController {
         uint256 start,
         uint256 end,
         uint256 extraInvestmentDuration
+    ) external;
+
+    function vote(
+        address _project,
+        uint256 _peoplesPoolAmount,
+        uint256 _stakersPoolAmount
+    ) external;
+
+    /// Invest on a project
+    function invest(
+        address _project,
+        uint256 _peoplesPoolAmount,
+        uint256 _stakersPoolAmount
     ) external;
 }
