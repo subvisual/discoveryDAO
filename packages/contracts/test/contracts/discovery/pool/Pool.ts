@@ -9,6 +9,8 @@ import {
   MockProject__factory,
   TestPool,
   TestPool__factory,
+  MockBatch,
+  MockBatch__factory,
 } from "../../../../src/types";
 
 const { parseUnits } = ethers.utils;
@@ -21,6 +23,7 @@ describe("Pool", () => {
 
   let aUSD: MockERC20;
   let project: MockProject;
+  let batch: MockBatch;
 
   let pool: TestPool;
 
@@ -31,6 +34,8 @@ describe("Pool", () => {
     project = await new MockProject__factory(owner).deploy();
     await project.test_createStakersPool(1000, aUSD.address);
     pool = TestPool__factory.connect(await project.stakersPool(), owner);
+    batch = await new MockBatch__factory(owner).deploy();
+    project.setBatch(batch.address);
 
     await aUSD.mint(alice.address, parseUnits("10000"));
     await aUSD.mint(bob.address, parseUnits("10000"));
@@ -143,6 +148,13 @@ describe("Pool", () => {
       await pool.setIndividualCap(1000, { gasLimit: 10000000 });
 
       expect(await pool.refundableAmount(alice.address)).to.equal(1);
+    });
+
+    it("is the full amount if the project has lost", async () => {
+      await project.connect(alice).invest(0, 200);
+      await batch.mock_setProjectStatus(project.address, 2);
+
+      expect(await pool.refundableAmount(alice.address)).to.equal(200);
     });
   });
 

@@ -99,6 +99,8 @@ describe("Batch", () => {
       expect(await batch.projects(0)).to.eq(fakeProject.address);
       expect(await batch.projects(1)).to.eq(anotherFakeProject.address);
       expect(await batch.slotCount()).to.eq(2);
+      expect(await fakeProject.batch()).to.eq(batch.address);
+      expect(await anotherFakeProject.batch()).to.eq(batch.address);
     });
 
     it("fails with an empty list of projects", async () => {
@@ -125,10 +127,17 @@ describe("Batch", () => {
       ).to.be.revertedWith("project must be an IProject");
     });
 
-    xit("fails if one of the projects is not whitelisted", async () => {
+    it("fails if one of the projects is not ready", async () => {
+      fakeProject = await registerProject(
+        owner,
+        projectToken,
+        controller,
+        aUSD
+      );
+
       await expect(
-        setUpBatch(controller, [fakeProject], owner)
-      ).to.be.revertedWith("project must be whitelisted");
+        controller.createBatch([fakeProject.address], 1)
+      ).to.be.revertedWith("project not ready");
     });
   });
 

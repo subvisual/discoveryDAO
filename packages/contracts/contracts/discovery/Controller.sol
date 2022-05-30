@@ -112,6 +112,7 @@ contract Controller is IController, ERC165, AccessControl {
             );
 
             projectsToBatches[project] = address(batch);
+            IProject(project).setBatch(address(batch));
         }
 
         emit BatchCreated(address(batch));

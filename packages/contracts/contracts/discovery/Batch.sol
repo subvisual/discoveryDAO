@@ -3,14 +3,13 @@ pragma solidity =0.8.12;
 
 import {ERC165Checker} from "@openzeppelin/contracts/utils/introspection/ERC165Checker.sol";
 
-import {ICommon} from "./interfaces/ICommon.sol";
 import {IProject} from "./interfaces/IProject.sol";
 import {IController} from "./interfaces/IController.sol";
 import {IBatch} from "./interfaces/IBatch.sol";
 import {IStaking} from "./interfaces/IStaking.sol";
 import {ProjectVoting} from "./ProjectVoting.sol";
 
-contract Batch is IBatch, ICommon, ProjectVoting {
+contract Batch is IBatch, ProjectVoting {
     using ERC165Checker for address;
 
     /// List of addresses for the project in the batch
@@ -120,12 +119,6 @@ contract Batch is IBatch, ICommon, ProjectVoting {
         return 0;
     }
 
-    function inInvestmentPeriod() external returns (bool) {
-        return
-            votingPeriod.start >= block.timestamp &&
-            investmentEnd <= block.timestamp;
-    }
-
     function projectVoting_voteLimitPerUser()
         public
         view
@@ -133,6 +126,16 @@ contract Batch is IBatch, ICommon, ProjectVoting {
         returns (uint256)
     {
         return slotCount;
+    }
+
+    //
+    // IBatch
+    //
+
+    function inInvestmentPeriod() external view returns (bool) {
+        return
+            votingPeriod.start >= block.timestamp &&
+            investmentEnd <= block.timestamp;
     }
 
     function hasVotedForProject(address _user, address _project)

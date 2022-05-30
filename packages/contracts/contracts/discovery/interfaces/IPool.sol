@@ -38,4 +38,6 @@ interface IPool {
 
     /// Similar to Sale.allocation
     function allocation(address _to) external view returns (uint256);
+
+    function setBatch(address _batch) external;
 }

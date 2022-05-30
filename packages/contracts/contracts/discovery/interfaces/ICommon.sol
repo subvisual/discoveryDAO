@@ -7,4 +7,10 @@ interface ICommon {
         uint256 start;
         uint256 end;
     }
+
+    enum ProjectStatus {
+        InProgress,
+        Won,
+        Lost
+    }
 }

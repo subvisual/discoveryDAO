@@ -6,6 +6,8 @@ import {SafeERC20} from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol
 
 import {IPool} from "../interfaces/IPool.sol";
 import {IProject} from "../interfaces/IProject.sol";
+import {IBatch} from "../interfaces/IBatch.sol";
+import {ICommon} from "../interfaces/ICommon.sol";
 import {RisingTide} from "../../RisingTide/RisingTide.sol";
 
 import "hardhat/console.sol";
@@ -17,7 +19,7 @@ import "hardhat/console.sol";
  * TODO `buy` is for the Project to be called from the project only
  * TODO other than these requirements, the rest should be very similar to the CTND Sale contract
  */
-abstract contract Pool is IPool, RisingTide {
+abstract contract Pool is IPool, ICommon, RisingTide {
     using SafeERC20 for IERC20;
 
     struct Investor {
@@ -54,6 +56,8 @@ abstract contract Pool is IPool, RisingTide {
 
     // Total supply of the project's token up for sale
     uint256 public immutable saleSupply;
+
+    address public batch;
 
     constructor(uint256 _saleSupply, address _investmentToken) {
         project = msg.sender;
@@ -104,6 +108,10 @@ abstract contract Pool is IPool, RisingTide {
         _risingTide_setCap(_cap);
     }
 
+    function setBatch(address _batch) external onlyProject {
+        batch = _batch;
+    }
+
     /// @inheritdoc IPool
     function refund(address _to) external override(IPool) capCalculated {
         Investor storage investor = investors[_to];
@@ -125,7 +133,11 @@ abstract contract Pool is IPool, RisingTide {
         override(IPool)
         returns (uint256)
     {
-        // TODO: Should ignore rising tide if project lost
+        ProjectStatus status = IBatch(batch).getProjectStatus(project);
+        if (status == ProjectStatus.Lost) {
+            return investors[_to].uncappedAllocation;
+        }
+
         if (!risingTide_isValidCap()) {
             return 0;
         }

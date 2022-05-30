@@ -6,6 +6,7 @@ import {ERC165} from "@openzeppelin/contracts/utils/introspection/ERC165.sol";
 
 import {IController} from "./interfaces/IController.sol";
 import {IProject} from "./interfaces/IProject.sol";
+import {IPool} from "./interfaces/IPool.sol";
 
 import {StakersPool} from "./pools/StakersPool.sol";
 import {PeoplesPool} from "./pools/PeoplesPool.sol";
@@ -52,6 +53,8 @@ contract Project is IProject, ERC165 {
     // has the project been approved by the legal team
     bool public override(IProject) approvedByLegal;
 
+    address public batch;
+
     constructor(
         string memory _description,
         address _token,
@@ -94,6 +97,11 @@ contract Project is IProject, ERC165 {
             IController(controller).hasLegalManagerRole(msg.sender),
             "not a legal manager"
         );
+        _;
+    }
+
+    modifier onlyController(address _account) {
+        require(_account == controller, "not the controller");
         _;
     }
 
@@ -158,6 +166,12 @@ contract Project is IProject, ERC165 {
         returns (uint256)
     {
         return (_amount * rate) / MUL;
+    }
+
+    function setBatch(address _batch) external onlyController(msg.sender) {
+        batch = _batch;
+        IPool(stakersPool).setBatch(_batch);
+        IPool(peoplesPool).setBatch(_batch);
     }
 
     //

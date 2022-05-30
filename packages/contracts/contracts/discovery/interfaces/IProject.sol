@@ -36,4 +36,6 @@ interface IProject {
         external
         view
         returns (uint256);
+
+    function setBatch(address _batch) external;
 }

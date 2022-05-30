@@ -7,12 +7,6 @@ import {Math} from "../libraries/Math.sol";
 import "hardhat/console.sol";
 
 abstract contract ProjectVoting is ICommon {
-    enum ProjectStatus {
-        InProgress,
-        Won,
-        Lost
-    }
-
     struct SortableVote {
         uint256 originalIndex;
         uint256 count;
