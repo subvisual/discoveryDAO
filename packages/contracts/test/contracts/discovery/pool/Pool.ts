@@ -9,6 +9,18 @@ import {
   MockProject__factory,
   TestPool,
   TestPool__factory,
+  TestPool,
+  TestPool__factory,
+  MockERC20,
+  MockERC20__factory,
+  Controller,
+  Controller__factory,
+  FractalRegistry,
+  FractalRegistry__factory,
+  Citizend,
+  Citizend__factory,
+  Staking,
+  Staking__factory,
 } from "../../../../src/types";
 
 const { parseUnits } = ethers.utils;
@@ -23,8 +35,14 @@ describe("Pool", () => {
   let project: MockProject;
 
   let pool: TestPool;
+  let controller: Controller;
+  let registry: FractalRegistry;
+  let citizend: Citizend;
+  let staking: Staking;
 
   beforeEach(async () => {
+    await deployments.fixture(["aUSD"]);
+
     [owner, alice, bob] = await ethers.getSigners();
 
     aUSD = await new MockERC20__factory(owner).deploy("aUSD", "aUSD", 12);
@@ -36,6 +54,25 @@ describe("Pool", () => {
     await aUSD.mint(bob.address, parseUnits("10000"));
     await aUSD.connect(alice).approve(pool.address, MaxUint256);
     await aUSD.connect(bob).approve(pool.address, MaxUint256);
+
+    const aUSDDeployment = await deployments.get("aUSD");
+    aUSD = MockERC20__factory.connect(aUSDDeployment.address, owner);
+
+    registry = await new FractalRegistry__factory(owner).deploy(owner.address);
+    citizend = await new Citizend__factory(owner).deploy(owner.address);
+    staking = await new Staking__factory(owner).deploy(citizend.address);
+    controller = await new Controller__factory(owner).deploy(
+      registry.address,
+      staking.address,
+      citizend.address
+    );
+
+    controller.setPaymentToken(aUSD.address);
+
+    pool = await new TestPool__factory(owner).deploy(
+      parseUnits("10000"),
+      controller.address
+    );
   });
 
   describe("constructor", () => {

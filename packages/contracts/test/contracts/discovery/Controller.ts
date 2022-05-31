@@ -222,4 +222,18 @@ describe("Controller", () => {
       ).to.be.revertedWith("already in a batch");
     });
   });
+
+  describe("vote", () => {});
+
+  describe("invest", () => {
+    it("allows to invest on a project", async () => {
+      await registry.addUserAddress(alice.address, formatBytes32String("id1"));
+      project = await registerProject(owner, projectToken, controller);
+      await makeProjectReady(project, projectToken);
+
+      await expect(controller
+        .connect(alice)
+        .invest(project.address, parseUnits("1000"), parseUnits("0"))).to.not.be.reverted;
+    });
+  });
 });

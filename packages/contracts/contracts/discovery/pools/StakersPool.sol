@@ -4,7 +4,9 @@ pragma solidity =0.8.12;
 import {Pool} from "./Pool.sol";
 
 contract StakersPool is Pool {
-    constructor(uint256 _saleSupply, address _investmentToken)
-        Pool(_saleSupply, _investmentToken)
-    {}
+    constructor(
+        uint256 _saleSupply,
+        address _investmentToken,
+        address _controller
+    ) Pool(_saleSupply, _investmentToken, _controller) {}
 }
