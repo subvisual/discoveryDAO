@@ -42,7 +42,9 @@ interface IController {
         address _token,
         uint256 _saleSupply,
         uint256 _rate,
-        address _investmentToken
+        address _investmentToken,
+        uint256 _cliffMonths,
+        uint256 _vestingMonths
     ) external;
 
     /// Checks if a project is included in the given batch

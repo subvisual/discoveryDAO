@@ -176,7 +176,9 @@ describe("Controller", () => {
           projectToken.address,
           parseUnits("1000"),
           parseUnits("2"),
-          aUSD.address
+          aUSD.address,
+          0,
+          3
         )
       ).to.emit(controller, "ProjectRegistered");
     });

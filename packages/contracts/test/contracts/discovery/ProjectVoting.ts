@@ -256,7 +256,9 @@ describe("ProjectVoting", () => {
       fakeToken.address,
       1000,
       10,
-      aUSD.address
+      aUSD.address,
+      0,
+      3
     );
   }
 });

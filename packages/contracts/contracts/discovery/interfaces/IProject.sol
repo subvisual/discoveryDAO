@@ -25,6 +25,12 @@ interface IProject {
 
     function peoplesPool() external view returns (address);
 
+    function token() external view returns (address);
+
+    function withdrawnPeoplesPool(address to) external view returns (uint256);
+
+    function withdrawnStakersPool(address to) external view returns (uint256);
+
     function invest(uint256 _peoplesAmount, uint256 _stakersAmount) external;
 
     function investmentTokenToToken(uint256 _amount)
@@ -36,4 +42,12 @@ interface IProject {
         external
         view
         returns (uint256);
+
+    /**
+     * Withdraws currently withdrawable amount for the
+     * given address on both pools
+     *
+     * @param to Address to withdraw to
+     */
+    function withdraw(address to) external;
 }

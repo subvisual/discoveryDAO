@@ -1,7 +1,6 @@
 import { network, ethers } from "hardhat";
 import type { BigNumber } from "ethers";
 
-console.log(Math.floor(new Date(2022, 4, 12, 8, 30).getTime() / 1000));
 const MANDALA_REGISTRY_ROOT = "0xC3e923e0CE5125088cDa62935056d6B5F14F234c";
 
 interface CTNDSale {

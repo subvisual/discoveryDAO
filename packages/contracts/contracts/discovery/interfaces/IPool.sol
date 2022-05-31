@@ -30,6 +30,21 @@ interface IPool {
      */
     function refundableAmount(address _to) external view returns (uint256);
 
+    /**
+     * Calculates withdrawable amount of tokens for an address.
+     * This should take into account:
+     *   - total vested amount
+     *   - already withdrawn amount
+     *   - number of months elapsed since the end of the account's cliff period
+     *   - total number of months this account is vesting for
+     * Vesting should be linear once cliff ends, but in monthly ticks, instead
+     * of a continuous release
+     *
+     * @param to The address to query
+     * @return The currently withdrawable amount
+     */
+    function withdrawable(address to) external view returns (uint256);
+
     /// Similar to Sale.uncappedAllocation
     function uncappedAllocation(address _to)
         external
@@ -38,4 +53,6 @@ interface IPool {
 
     /// Similar to Sale.allocation
     function allocation(address _to) external view returns (uint256);
+
+    function withdrawn(address _to) external view returns (uint256);
 }

@@ -78,14 +78,18 @@ contract Controller is IController, ERC165, AccessControl {
         address _token,
         uint256 _saleSupply,
         uint256 _rate,
-        address _investmentToken
+        address _investmentToken,
+        uint256 _cliffMonths,
+        uint256 _vestingMonths
     ) external override(IController) {
         IProject project = new Project(
             _description,
             _token,
             _saleSupply,
             _rate,
-            _investmentToken
+            _investmentToken,
+            _cliffMonths,
+            _vestingMonths
         );
 
         emit ProjectRegistered(address(project));

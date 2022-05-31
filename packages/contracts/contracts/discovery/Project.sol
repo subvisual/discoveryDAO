@@ -29,7 +29,7 @@ contract Project is IProject, ERC165 {
     address public immutable controller;
 
     // The token to be listed for sale
-    address public immutable token;
+    address public immutable override(IProject) token;
 
     // Total supply of {token} up for sale
     uint256 public immutable saleSupply;
@@ -52,12 +52,17 @@ contract Project is IProject, ERC165 {
     // has the project been approved by the legal team
     bool public override(IProject) approvedByLegal;
 
+    mapping(address => uint256) _withdrawnPeoplesPool;
+    mapping(address => uint256) _withdrawnStakersPool;
+
     constructor(
         string memory _description,
         address _token,
         uint256 _saleSupply,
         uint256 _rate,
-        address _investmentToken
+        address _investmentToken,
+        uint256 _cliffMonths,
+        uint256 _vestingMonths
     ) {
         controller = msg.sender;
 
@@ -70,10 +75,20 @@ contract Project is IProject, ERC165 {
         uint256 peoplesPoolSupply = saleSupply - stakersPoolSupply;
 
         stakersPool = address(
-            new StakersPool(stakersPoolSupply, _investmentToken)
+            new StakersPool(
+                stakersPoolSupply,
+                _investmentToken,
+                _cliffMonths,
+                _vestingMonths
+            )
         );
         peoplesPool = address(
-            new PeoplesPool(peoplesPoolSupply, _investmentToken)
+            new PeoplesPool(
+                peoplesPoolSupply,
+                _investmentToken,
+                _cliffMonths,
+                _vestingMonths
+            )
         );
     }
 
@@ -158,6 +173,37 @@ contract Project is IProject, ERC165 {
         returns (uint256)
     {
         return (_amount * rate) / MUL;
+    }
+
+    /// @inheritdoc IProject
+    function withdraw(address to) external override(IProject) {
+        uint256 withdrawablePeople = PeoplesPool(peoplesPool).withdrawable(to);
+        uint256 withdrawableStakers = StakersPool(stakersPool).withdrawable(to);
+        uint256 withdrawableAmount = withdrawablePeople + withdrawableStakers;
+        require(withdrawableAmount > 0, "No withdrawable amount");
+
+        _withdrawnPeoplesPool[to] += withdrawablePeople;
+        _withdrawnStakersPool[to] += withdrawableStakers;
+
+        IERC20(token).transfer(to, withdrawableAmount);
+    }
+
+    function withdrawnPeoplesPool(address to)
+        external
+        view
+        override(IProject)
+        returns (uint256)
+    {
+        return _withdrawnPeoplesPool[to];
+    }
+
+    function withdrawnStakersPool(address to)
+        external
+        view
+        override(IProject)
+        returns (uint256)
+    {
+        return _withdrawnStakersPool[to];
     }
 
     //

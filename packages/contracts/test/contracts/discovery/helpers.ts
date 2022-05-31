@@ -26,7 +26,9 @@ export async function registerProject(
     projectToken.address,
     parseUnits("1000"),
     parseUnits("2"),
-    investmentToken.address
+    investmentToken.address,
+    0,
+    3
   );
 
   const event = await findEvent(tx, "ProjectRegistered");
