@@ -5,6 +5,7 @@
     "packages": [
       "packages/contracts",
       "packages/web",
+      "packages/web-app",
       "packages/dev"
     ],
     "nohoist": [
