@@ -1,5 +1,5 @@
 import { Providers } from '@/app/_providers';
-import { Footer, Info, Topbar, Button } from './_ui/components';
+import { Footer, Info, Topbar } from './_ui/components';
 
 export default function Home() {
   return (
@@ -7,7 +7,7 @@ export default function Home() {
       <Providers>
         <Topbar />
         <div className="bg-background-pattern-overlay bg-cover py-20">
-          <main className="px-31 gap-x-17 mx-auto grid max-w-7xl grid-cols-1 gap-y-9 lg:grid-cols-2">
+          <main className="mx-auto grid max-w-7xl grid-cols-1 gap-x-17 gap-y-9 px-31 lg:grid-cols-2">
             <div className="max-w-2xl max-w-prose">
               <h3>Citizend Communiy Sale</h3>
               <p className="pt-2">

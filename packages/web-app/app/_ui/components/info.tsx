@@ -2,8 +2,26 @@
 
 import { useAccount, useBalance } from 'wagmi';
 import { formatEther } from 'viem';
-import { useSession } from '@/app/_context/session';
 import { Button } from './button';
+import {
+  useFetchCredentials,
+  useFetchIdOSProfile,
+  useIdOS,
+} from '@/app/_providers/idos';
+
+const IdosInfo = () => {
+  const { data, isError, isLoading } = useFetchIdOSProfile();
+  // const { data: credentials } = useFetchCredentials();
+
+  console.log(
+    '%c==>',
+    'color: green; background: yellow; font-size: 20px',
+    data,
+    // credentials,
+  );
+
+  return <p>here</p>;
+};
 
 export function Info() {
   const account = useAccount();
@@ -11,13 +29,7 @@ export function Info() {
     address: account.address,
     blockTag: 'latest',
   });
-  const { humanId, authenticate } = useSession();
-
-  //   console.log(
-  //     '%c==>',
-  //     'color: green; background: red; font-size: 20px',
-  //     balance,
-  //   );
+  const { hasProfile, authenticate } = useIdOS();
 
   if (!account?.address) return null;
 
@@ -34,7 +46,8 @@ export function Info() {
         Balance:{' '}
         {balance?.data?.formatted ? formatEther(balance?.data.value) : null}
       </p>
-      <p>HumanId: {humanId}</p>
+      {/* <p>HumanId: {humanId}</p> */}
+      {hasProfile ? <IdosInfo /> : null}
       <div>
         <Button onClick={authenticate}>Check KYC status</Button>
       </div>

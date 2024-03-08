@@ -1,5 +1,5 @@
 import { BrowserProvider, JsonRpcSigner } from 'ethers';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import type { Account, Chain, Client, Transport } from 'viem';
 import { type Config, useConnectorClient } from 'wagmi';
 
@@ -15,7 +15,7 @@ export function clientToSigner(client: Client<Transport, Chain, Account>) {
   return signer;
 }
 
-/** Hook to convert a viem Wallet Client to an ethers.js Signer. */
+// /** Hook to convert a viem Wallet Client to an ethers.js Signer. */
 export function useEthersSigner({ chainId }: { chainId?: number } = {}) {
   const { data: client } = useConnectorClient<Config>({ chainId });
   const [signer, setSigner] = useState<JsonRpcSigner | undefined>();
