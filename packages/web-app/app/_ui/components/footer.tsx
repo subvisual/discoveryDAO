@@ -152,7 +152,7 @@ export function Footer() {
   return (
     <footer
       aria-labelledby="footer-heading"
-      className="px-27 flex flex-col flex-wrap justify-between py-14 md:flex-row"
+      className="flex flex-col flex-wrap justify-between px-27 py-14 md:flex-row"
     >
       <h2 id="footer-heading" className="sr-only">
         Footer

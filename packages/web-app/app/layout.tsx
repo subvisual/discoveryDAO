@@ -2,6 +2,8 @@ import type { Metadata } from 'next';
 import { sora } from '@/app/_ui/fonts';
 import '@rainbow-me/rainbowkit/styles.css';
 import './_ui/global.css';
+import { Footer, Topbar } from '@/app/_ui/components';
+import { Providers } from './_providers';
 
 export const metadata: Metadata = {
   title: {
@@ -35,10 +37,16 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body
-        className={`${sora.className} min-h-screen bg-background-pattern bg-cover bg-no-repeat antialiased`}
-      >
-        {children}
+      <body className={`${sora.className}`}>
+        <Providers>
+          <div className="flex min-h-screen flex-col bg-background-pattern bg-cover bg-no-repeat antialiased">
+            <Topbar />
+            <div className="grow bg-background-pattern-overlay bg-cover py-20">
+              <div className="mx-auto max-w-7xl">{children}</div>
+            </div>
+            <Footer />
+          </div>
+        </Providers>
         <div id="idos"></div>
       </body>
     </html>

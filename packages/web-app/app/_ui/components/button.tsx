@@ -6,6 +6,7 @@ type TButtonProps = {
   onClick?: () => void;
   children: ReactNode;
   variant?: 'primary' | 'secondary' | 'dropdown' | 'primary-disabled';
+  className?: string;
 };
 
 export function Button({
@@ -14,6 +15,7 @@ export function Button({
   onClick,
   children,
   variant = 'primary',
+  className,
   ...props
 }: TButtonProps) {
   const variantClasses = {
@@ -34,6 +36,7 @@ export function Button({
       className={clsx(
         'focus-visible:outline-offset hover:shadow-button inline-flex select-none items-center justify-center rounded-md p-4 font-semibold',
         variantClasses[variant],
+        className,
       )}
       {...props}
     >

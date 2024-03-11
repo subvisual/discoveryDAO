@@ -8,6 +8,7 @@ import {
   useFetchIdOSProfile,
   useIdOS,
 } from '@/app/_providers/idos';
+import { useReadControllerProjects } from '@/wagmi.generated';
 
 const IdosInfo = () => {
   const { data, isError, isLoading } = useFetchIdOSProfile();
@@ -30,8 +31,16 @@ export function Info() {
     blockTag: 'latest',
   });
   const { hasProfile, authenticate } = useIdOS();
+  const test = useReadControllerProjects();
 
   if (!account?.address) return null;
+
+  console.log('%c==>', 'color: green; background: pink; font-size: 20px', test);
+  console.log(
+    '%c==>',
+    'color: green; background: yellow; font-size: 20px',
+    test.isPending,
+  );
 
   return (
     <div className="grid grid-cols-1 gap-2">
