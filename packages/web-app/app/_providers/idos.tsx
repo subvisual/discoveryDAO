@@ -22,16 +22,34 @@ type idOSContextValue = {
   reset: () => Promise<void>;
 };
 
-const getAuthUrl = (address: string) => {
-  const base = process.env.NEXT_PUBLIC_PROFILE_PROVIDER_TEST_BASE;
-  const idOs = '%20verification.idos%3Aread%20verification.idos.details%3Aread';
-  const livenessCheck =
-    '%20verification.liveness%3Aread%20verification.liveness.details%3Aread';
-  const ethWallet =
-    '%20verification.wallet-eth%3Aread%20verification.wallet-eth.details%3Aread';
-  const ensureWallet = '&ensure_wallet=';
+const idOsConfig = {
+  container: '#idos',
+  nodeUrl: process.env.NEXT_PUBLIC_IDOS_NODE_URL,
+  dbId: process.env.NEXT_PUBLIC_IDOS_DB_ID,
+  evmGrantsOptions: {
+    contractAddress: process.env.NEXT_PUBLIC_IDOS_CONTRACT_ADDRESS,
+    chainId: process.env.NEXT_PUBLIC_IDOS_CHAIN_ID,
+  },
+};
 
-  return base + idOs + livenessCheck + ethWallet + ensureWallet + address;
+const providerBaseUrl = process.env.NEXT_PUBLIC_PROFILE_PROVIDER_BASE;
+const providerIdosCheck =
+  '%20verification.idos%3Aread%20verification.idos.details%3Aread';
+const providerLivenessCheck =
+  '%20verification.liveness%3Aread%20verification.liveness.details%3Aread';
+const providerEthWalletCheck =
+  '%20verification.wallet-eth%3Aread%20verification.wallet-eth.details%3Aread';
+const providerEnsureWalletCheck = '&ensure_wallet=';
+
+const getProviderUrl = (address: string) => {
+  return (
+    providerBaseUrl +
+    providerIdosCheck +
+    providerLivenessCheck +
+    providerEthWalletCheck +
+    providerEnsureWalletCheck +
+    address
+  );
 };
 
 const idOSContext = createContext<idOSContextValue | null>(null);
@@ -59,7 +77,7 @@ export const useFetchCredentials = () => {
 
   return useQuery({
     queryKey: ['credentials'],
-    queryFn: () => sdk?.data.list('credentials'),
+    queryFn: () => sdk?.grants.list(),
   });
 };
 
@@ -80,19 +98,19 @@ export const IdOsProvider = ({ children }: PropsWithChildren) => {
       'color: green; background: yellow; font-size: 12px',
       user,
     );
-    if (!hasProfile) {
-      window.open(
-        getAuthUrl(ethSigner.address),
-        '_blank',
-        'noopener,noreferrer',
-      );
-    }
+    // if (!hasProfile) {
+    window.open(
+      getProviderUrl(ethSigner.address),
+      '_blank',
+      'noopener,noreferrer',
+    );
+    // }
   }, [ethSigner, sdk, hasProfile]);
 
   // Load SDK once wallet is connected
   useEffect(() => {
     const loadSdk = async () => {
-      const ref = await idOS.init({ container: '#idos' });
+      const ref = await idOS.init(idOsConfig);
       sdkRef.current = ref;
       setSdk(ref);
     };

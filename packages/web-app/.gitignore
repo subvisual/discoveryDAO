@@ -37,3 +37,8 @@ next-env.d.ts
 
 # MacOs files
 .DS_Store
+
+# Contracts
+contracts/localhost
+
+wagmi.generated.ts
