@@ -40,6 +40,7 @@ const config: Config = {
       },
       boxShadow: {
         'shadow-button': '0px 0px 8px 0px rgba(53, 66, 87, 0.80)',
+        'projects-table': '0px 4px 16px 0px #DADFED',
       },
     },
     keyframes: {

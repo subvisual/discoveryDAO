@@ -162,6 +162,7 @@ export function Footer() {
         alt="Citizend logo"
         width={260}
         height={228}
+        priority
       />
       <div className="flex flex-col gap-16 md:flex-row">
         <NavigationMenu title="Information" items={navigation.information} />

@@ -12,12 +12,13 @@ import {
 } from 'react';
 import { useAccount, useAccountEffect } from 'wagmi';
 import { useEthersSigner } from './utils';
+import { idOSCredential } from '../_types/idos';
 
 type idOSContextValue = {
   sdk: idOS | null;
   address: string | undefined;
   hasProfile: boolean;
-  isConnected: boolean;
+  hasSigned: boolean;
   authenticate: () => Promise<void>;
   reset: () => Promise<void>;
 };
@@ -32,7 +33,7 @@ const idOsConfig = {
   },
 };
 
-const providerBaseUrl = process.env.NEXT_PUBLIC_PROFILE_PROVIDER_BASE;
+const providerBaseUrl = process.env.NEXT_PUBLIC_PROFILE_PROVIDER_TEST_BASE;
 const providerIdosCheck =
   '%20verification.idos%3Aread%20verification.idos.details%3Aread';
 const providerLivenessCheck =
@@ -77,41 +78,73 @@ export const useFetchCredentials = () => {
 
   return useQuery({
     queryKey: ['credentials'],
-    queryFn: () => sdk?.grants.list(),
+    queryFn: async ({ queryKey: [tableName] }) => {
+      if (!sdk) return [];
+
+      const credentials = await sdk.data.list<idOSCredential>(tableName);
+      return credentials.map((credential) => ({
+        ...credential,
+        shares: credentials
+          .filter((_credential) => _credential.original_id === credential.id)
+          .map((c) => c.id),
+      }));
+    },
+    select: (credentials) =>
+      credentials.filter((credential) => !credential.original_id),
+  });
+};
+
+export const useFetchWallets = () => {
+  const { sdk } = useIdOS();
+
+  return useQuery({
+    queryKey: ['wallets'],
+    queryFn: () => sdk?.data.list('wallets'),
+  });
+};
+
+export const useFetchGrants = () => {
+  const { sdk } = useIdOS();
+  const { address } = useAccount();
+
+  return useQuery({
+    queryKey: ['grants', address],
+    queryFn: () => sdk?.grants.list({ owner: address }),
   });
 };
 
 export const IdOsProvider = ({ children }: PropsWithChildren) => {
   const [hasProfile, setHasProfile] = useState(false);
+  const [hasSigned, setHasSigned] = useState(false);
   const [sdk, setSdk] = useState<idOS | null>(null);
   const ethSigner = useEthersSigner();
   const { address: userAddress, isConnected } = useAccount();
-  const sdkRef = useRef<idOS | null>(null);
 
   const authenticate = useCallback(async () => {
-    if (!ethSigner || !sdk) return;
+    if (!ethSigner || !sdk || !userAddress) return;
+
+    const _profile = await sdk.hasProfile(userAddress);
+
+    if (!_profile) {
+      window.open(
+        getProviderUrl(ethSigner.address),
+        '_blank',
+        'noopener,noreferrer',
+      );
+
+      return;
+    }
 
     await sdk.setSigner('EVM', ethSigner);
-    const user = await sdk.auth.currentUser();
-    console.log(
-      '%c==> current user',
-      'color: green; background: yellow; font-size: 12px',
-      user,
-    );
-    // if (!hasProfile) {
-    window.open(
-      getProviderUrl(ethSigner.address),
-      '_blank',
-      'noopener,noreferrer',
-    );
-    // }
-  }, [ethSigner, sdk, hasProfile]);
+
+    setHasProfile(true);
+    setHasSigned(true);
+  }, [ethSigner, sdk, userAddress]);
 
   // Load SDK once wallet is connected
   useEffect(() => {
     const loadSdk = async () => {
       const ref = await idOS.init(idOsConfig);
-      sdkRef.current = ref;
       setSdk(ref);
     };
     if (isConnected && !sdk) {
@@ -125,18 +158,8 @@ export const IdOsProvider = ({ children }: PropsWithChildren) => {
       if (!ethSigner || !userAddress || !sdk) return;
 
       const profile = await sdk.hasProfile(userAddress);
-      console.log(
-        '%c==> hasProfile?',
-        'color: green; background: black; font-size: 12px',
-        userAddress,
-        '=>',
-        profile,
-      );
-      setHasProfile(profile);
 
-      if (profile) {
-        // await _sdk.setSigner('EVM', signer);
-      }
+      setHasProfile(profile);
     };
 
     initialize();
@@ -144,6 +167,8 @@ export const IdOsProvider = ({ children }: PropsWithChildren) => {
 
   const handleDisconnect = useCallback(async () => {
     await sdk?.reset({ enclave: true });
+    setHasProfile(false);
+    setHasSigned(false);
     // setSdk(null);
   }, [sdk]);
 
@@ -165,13 +190,13 @@ export const IdOsProvider = ({ children }: PropsWithChildren) => {
       sdk: sdk,
       hasProfile,
       address: userAddress,
-      isConnected,
+      hasSigned,
       authenticate,
       reset: async () => {
         await sdk?.reset({ enclave: true });
       },
     };
-  }, [sdk, hasProfile, userAddress, isConnected, authenticate]);
+  }, [sdk, hasProfile, hasSigned, userAddress, authenticate]);
 
   return <idOSContext.Provider value={state}>{children}</idOSContext.Provider>;
 };

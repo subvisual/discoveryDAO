@@ -52,8 +52,6 @@ type TProjectProps = {
 };
 
 export default function Project({ params }: TProjectProps) {
-  console.log('%c==>', 'color: red; background: red; font-size: 20px', params);
-
   if (params.id !== 'citizend') {
     return '404 Not Found';
   }
