@@ -1,19 +1,17 @@
 'use client';
 
-import { useAccount, useBalance } from 'wagmi';
-import { formatEther } from 'viem';
+import { useAccount } from 'wagmi';
 import { Button } from './button';
-import {
-  useFetchCredentials,
-  useFetchGrants,
-  useFetchIdOSProfile,
-  useFetchWallets,
-  useIdOS,
-} from '@/app/_providers/idos';
+import { useIdOS } from '@/app/_providers/idos';
 import { useReadControllerProjects } from '@/wagmi.generated';
 import { useState } from 'react';
 import { idOS } from '@idos-network/idos-sdk';
 import { getAccessGrantsContentDecrypted } from '@/app/server/idos';
+import {
+  useFetchCredentials,
+  useFetchGrants,
+  useFetchWallets,
+} from '@/app/_lib/queries';
 
 const json = (object) => {
   return JSON.stringify(object, '', 2).replace(/"(data:.*?;).*/g, '$1 (...)');
