@@ -31,7 +31,7 @@ const config: Config = {
         'grey-gradient-start': '#455069',
         'grey-gradient-end': '#3A4B70',
         'font-color': '#354257',
-        'font-color-light': '#727D8E',
+        'font-color-light': '#5E7799',
       },
       spacing: {
         '17': '4.25rem',

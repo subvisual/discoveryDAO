@@ -1,6 +1,7 @@
 'use client';
 import { useReadControllerProjects } from '@/wagmi.generated';
 import {
+  createColumnHelper,
   flexRender,
   getCoreRowModel,
   getPaginationRowModel,
@@ -8,39 +9,33 @@ import {
 } from '@tanstack/react-table';
 import { useEffect, useState } from 'react';
 
-const columns = [
-  {
-    header: 'Project',
-    accessor: 'project',
-  },
-  {
-    header: 'Targeted Raise (ETH)',
-    accessor: 'targetedRaise',
-  },
-  {
-    header: '% of supply sold',
-    accessor: 'supplySold',
-  },
-  {
-    header: 'Votes',
-    accessor: 'votes',
-  },
-];
+type Project = {
+  id: number;
+  project: string;
+  targetedRaise: number;
+  supplySold: number;
+  votes: number;
+  urlId?: string;
+};
 
-const dummyData = [
+const defaultData: Project[] = [
   {
-    project: 'Project 1',
+    id: 1,
+    project: 'Citizend Community Sale',
     targetedRaise: 100,
     supplySold: 50,
     votes: 100,
+    urlId: 'citizend',
   },
   {
+    id: 2,
     project: 'Project 2',
     targetedRaise: 200,
     supplySold: 100,
     votes: 200,
   },
   {
+    id: 3,
     project: 'Project 3',
     targetedRaise: 300,
     supplySold: 150,
@@ -48,11 +43,44 @@ const dummyData = [
   },
 ];
 
+const columnHelper = createColumnHelper<Project>();
+
+const columns = [
+  columnHelper.accessor('id', {
+    header: () => '#',
+    cell: (info) => info.getValue(),
+  }),
+  columnHelper.accessor('project', {
+    cell: (info) => (
+      <a
+        href={`/projects/${info.row.original.urlId}`}
+        className="font-semibold"
+      >
+        {info.getValue()}
+      </a>
+    ),
+    header: () => 'Project',
+    footer: (info) => info.column.id,
+  }),
+  columnHelper.accessor('targetedRaise', {
+    header: () => 'Targeted Raise (ETH)',
+    cell: (info) => info.renderValue(),
+  }),
+  columnHelper.accessor('supplySold', {
+    header: () => '% of supply sold',
+    cell: (info) => <span>{info.renderValue()}%</span>,
+  }),
+  columnHelper.accessor('votes', {
+    header: () => 'Votes',
+    cell: (info) => info.renderValue(),
+  }),
+];
+
 export function ProjectsTable() {
   //   const { data, isError, isLoading } = useReadControllerProjects();
   //   const [projects, setProjects] = useState<any[] | null>(null);
   const table = useReactTable({
-    data: dummyData,
+    data: [...defaultData],
     columns,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
@@ -67,12 +95,6 @@ export function ProjectsTable() {
   //   if (isLoading) return <p>Loading...</p>;
   //   if (isError) return <p>Error</p>;
 
-  console.log(
-    '%c==>',
-    'color: green; background: yellow; font-size: 20px',
-    table.getRowCount(),
-  );
-
   return (
     <table className="shadow-projects-table w-full rounded-md border-grey-lightest bg-white">
       <thead>
@@ -82,8 +104,7 @@ export function ProjectsTable() {
               return (
                 <td
                   key={header.id}
-                  align={header.column.columnDef?.align}
-                  className="p-6"
+                  className="p-6 font-semibold uppercase text-font-color-light"
                 >
                   {flexRender(
                     header.column.columnDef.header,
@@ -97,22 +118,15 @@ export function ProjectsTable() {
       </thead>
       {table.getRowCount() ? (
         <tbody>
-          {table.getRowModel()?.rows?.map((row) => {
-            return (
-              <tr key={row.id}>
-                {row
-                  .getVisibleCells()
-                  ?.map((cell) => (
-                    <td key={cell.id}>
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext(),
-                      )}
-                    </td>
-                  ))}
-              </tr>
-            );
-          })}
+          {table.getRowModel().rows.map((row) => (
+            <tr key={row.id} className="hover:bg-grey-lightest">
+              {row.getVisibleCells().map((cell) => (
+                <td key={cell.id} className="border-t border-grey-lightest p-6">
+                  {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                </td>
+              ))}
+            </tr>
+          ))}
         </tbody>
       ) : null}
     </table>
