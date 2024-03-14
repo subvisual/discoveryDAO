@@ -7,6 +7,7 @@ import {
   getPaginationRowModel,
   useReactTable,
 } from '@tanstack/react-table';
+import Link from 'next/link';
 import { useEffect, useState } from 'react';
 
 type Project = {
@@ -52,12 +53,12 @@ const columns = [
   }),
   columnHelper.accessor('project', {
     cell: (info) => (
-      <a
+      <Link
         href={`/projects/${info.row.original.urlId}`}
         className="font-semibold"
       >
         {info.getValue()}
-      </a>
+      </Link>
     ),
     header: () => 'Project',
     footer: (info) => info.column.id,

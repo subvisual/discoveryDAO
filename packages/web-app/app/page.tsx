@@ -8,9 +8,6 @@ export default function Home() {
         A Polkadot-native token launch platform, by and for the community
       </p>
       <ProjectsTable />
-      <a className="bg-red-200 text-white" href="/projects/citizend">
-        CITIZEND
-      </a>
     </div>
   );
 }
