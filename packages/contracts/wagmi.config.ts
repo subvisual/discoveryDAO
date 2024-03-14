@@ -7,6 +7,11 @@ export default defineConfig({
     foundry({
       project: "./",
       exclude: ["MockERC20.sol"],
+      deployments: {
+        Project: {
+          31337: "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0",
+        },
+      },
     }),
     react(),
   ],
