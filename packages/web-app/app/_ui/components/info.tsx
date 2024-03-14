@@ -3,7 +3,6 @@
 import { useAccount } from 'wagmi';
 import { Button } from './button';
 import { useIdOS } from '@/app/_providers/idos';
-import { useReadControllerProjects } from '@/wagmi.generated';
 import { useState } from 'react';
 import { idOS } from '@idos-network/idos-sdk';
 import { getAccessGrantsContentDecrypted } from '@/app/server/idos';
@@ -131,7 +130,6 @@ const IdosInfo = () => {
 
 export function Info() {
   const { hasSigned, authenticate, address } = useIdOS();
-  const test = useReadControllerProjects();
 
   if (!address) return null;
 

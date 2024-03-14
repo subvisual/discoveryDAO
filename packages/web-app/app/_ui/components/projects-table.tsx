@@ -1,5 +1,6 @@
 'use client';
-import { useReadControllerProjects } from '@/wagmi.generated';
+
+import { useReadProjectDescription } from '@/wagmi.generated';
 import {
   createColumnHelper,
   flexRender,
@@ -78,7 +79,6 @@ const columns = [
 ];
 
 export function ProjectsTable() {
-  //   const { data, isError, isLoading } = useReadControllerProjects();
   //   const [projects, setProjects] = useState<any[] | null>(null);
   const table = useReactTable({
     data: [...defaultData],

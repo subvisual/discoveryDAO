@@ -2,6 +2,7 @@
 
 import Image from 'next/image';
 import { Button, Info } from '@/app/_ui/components';
+import { ProjectDescription } from '@/app/_ui/components/project-description';
 
 type TTokenMetricsProps = {
   token: string;
@@ -70,6 +71,7 @@ export default function Project({ params }: TProjectProps) {
         <p className="pt-2">
           A Polkadot-native token launch platform, by and for the community
         </p>
+        <ProjectDescription />
         <div className="mb-9 mt-12 border-t border-grey" />
         <h4 className="mb-8 font-semibold uppercase">Description</h4>
         <p>
