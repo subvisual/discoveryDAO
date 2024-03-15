@@ -41,12 +41,12 @@ export const useFetchWallets = () => {
   });
 };
 
-export const useFetchGrants = () => {
+export const useFetchGrants = (grantee: string) => {
   const { sdk } = useIdOS();
   const { address } = useAccount();
 
   return useQuery({
-    queryKey: ['grants', address],
-    queryFn: () => sdk?.grants.list({ owner: address }),
+    queryKey: ['grants', address, grantee],
+    queryFn: () => sdk?.grants.list({ owner: address, grantee }),
   });
 };

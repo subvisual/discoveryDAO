@@ -9,7 +9,7 @@ import * as Base64Codec from '@stablelib/base64';
 import * as Utf8Codec from '@stablelib/utf8';
 import { ethers } from 'ethers';
 import nacl from 'tweetnacl';
-import { Grant, KwilSigner } from './types';
+import { Grant, KwilSigner, PublicInfo } from './types';
 
 const ENCRYPTION_SECRET_KEY = Base64Codec.decode(
   '2bu7SyMToRAuFn01/oqU3fx9ZHo9GKugQhQYmDuBXzg=',
@@ -27,7 +27,7 @@ const evmGrantee = new ethers.Wallet(
   new ethers.JsonRpcProvider(EVM_NODE_URL),
 );
 
-export const kwilSigner: KwilSigner = {
+const kwilSigner: KwilSigner = {
   signer: evmGrantee as unknown as SignerSupplier,
   publicKey: evmGrantee.signingKey.publicKey,
   signatureType: 'secp256k1_ep',
@@ -74,13 +74,13 @@ const fetchAccessGrantDataFromIdos = async (
   dataId: string,
 ): Promise<Grant> => {
   const kwilClient = new WebKwil({
-    kwilProvider: idOS.kwil.kwilProvider,
-    chainId: idOS.kwil.chainId,
+    kwilProvider: process.env.NEXT_PUBLIC_IDOS_NODE_URL as string,
+    chainId: process.env.NEXT_PUBLIC_IDOS_CHAIN_ID as string,
   });
 
   const res = await kwilClient.call(
     {
-      dbid: idOS.kwil.dbId,
+      dbid: process.env.NEXT_PUBLIC_IDOS_DB_ID as string,
       action: 'get_credential_shared',
       inputs: [{ $id: dataId }],
     },
@@ -98,16 +98,30 @@ const fetchAccessGrantDataFromIdos = async (
 };
 
 export const getAccessGrantsContentDecrypted = async (dataId: string) => {
-  const credentialCopy = await fetchAccessGrantDataFromIdos(kwilSigner, dataId);
-  const decrypted_content = await decrypt(
-    credentialCopy.content,
-    credentialCopy.encryption_public_key,
-  );
-  return decrypted_content;
+  try {
+    const credentialCopy = await fetchAccessGrantDataFromIdos(
+      kwilSigner,
+      dataId,
+    );
+
+    const decryptedContent = await decrypt(
+      credentialCopy.content,
+      credentialCopy.encryption_public_key,
+    );
+
+    return { content: decryptedContent };
+  } catch (error) {
+    return { content: 'caput', errors: error?.message };
+  }
 };
 
-export const publicInfo = {
+const publicInfo: PublicInfo = {
   grantee: evmGrantee.address,
   encryptionPublicKey: Base64Codec.encode(ENCRYPTION_KEY_PAIR.publicKey),
   lockTimeSpanSeconds: 3600, // one hour
 };
+
+export const getPublicInfo = (): Promise<PublicInfo> =>
+  new Promise((resolve) => {
+    resolve(publicInfo);
+  });
