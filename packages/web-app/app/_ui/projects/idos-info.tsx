@@ -1,13 +1,13 @@
 'use client';
 
 import { useAccount } from 'wagmi';
-import { Button } from './button';
+import { Button } from '../components/button';
 import { useIdOS } from '@/app/_providers/idos';
 import { useState } from 'react';
 import { idOS } from '@idos-network/idos-sdk';
 import { useFetchCredentials, useFetchWallets } from '@/app/_lib/queries';
-import { PublicInfo } from '@/app/server/types';
-import { AcquireAccessGrantButton } from './acquire-access-grant-button';
+import { PublicInfo } from '@/app/_server/types';
+import { AcquireAccessGrantButton } from '../components/acquire-access-grant-button';
 import { Grants } from './grants';
 
 const json = (object) => {
@@ -26,6 +26,18 @@ export const IdosInfo = ({ serverInfo }: TIdosInfoProps) => {
   const { data, isError, isLoading } = useFetchCredentials();
   const { data: wallets } = useFetchWallets();
   // const { data: credentials } = useFetchCredentials();
+
+  console.log(
+    '%c==>',
+    'color: green; background: yellow; font-size: 20px',
+    serverInfo,
+  );
+
+  console.log(
+    '%c==>Credentials',
+    'color: green; background: yellow; font-size: 20px',
+    data,
+  );
 
   return (
     <div className="mt-2">
@@ -61,6 +73,12 @@ export const IdosInfo = ({ serverInfo }: TIdosInfoProps) => {
 
                   if (!_credential) return;
                   const { content } = _credential;
+
+                  console.log(
+                    '%c==>Credential',
+                    'color: green; background: yellow; font-size: 20px',
+                    content,
+                  );
 
                   const verified =
                     await idOS.verifiableCredentials.verify(content);

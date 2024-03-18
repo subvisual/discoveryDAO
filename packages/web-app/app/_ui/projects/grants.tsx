@@ -1,9 +1,9 @@
 'use client';
 
 import { useFetchGrants } from '@/app/_lib/queries';
-import { PublicInfo } from '@/app/server/types';
-import { Button } from './button';
-import { getAccessGrantsContentDecrypted } from '@/app/server/idos';
+import { PublicInfo } from '@/app/_server/types';
+import { Button } from '../components/button';
+import { getAccessGrantsContentDecrypted } from '@/app/_server/idos';
 import { useFormState } from 'react-dom';
 
 type TGrantsProps = {

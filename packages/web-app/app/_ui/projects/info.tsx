@@ -1,9 +1,9 @@
 'use client';
 
-import { Button } from './button';
+import { Button } from '../components/button';
 import { useIdOS } from '@/app/_providers/idos';
 import { IdosInfo } from './idos-info';
-import { PublicInfo } from '@/app/server/types';
+import { PublicInfo } from '@/app/_server/types';
 
 type TInfoProps = {
   serverInfo: PublicInfo;
