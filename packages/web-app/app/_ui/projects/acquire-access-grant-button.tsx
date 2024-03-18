@@ -1,5 +1,5 @@
 'use client';
-import { Button } from '.';
+import { Button } from '../components';
 import { PublicInfo } from '@/app/_server/types';
 import { useIdOS } from '@/app/_providers/idos';
 

@@ -7,7 +7,7 @@ import { useState } from 'react';
 import { idOS } from '@idos-network/idos-sdk';
 import { useFetchCredentials, useFetchWallets } from '@/app/_lib/queries';
 import { PublicInfo } from '@/app/_server/types';
-import { AcquireAccessGrantButton } from '../components/acquire-access-grant-button';
+import { AcquireAccessGrantButton } from './acquire-access-grant-button';
 import { Grants } from './grants';
 
 const json = (object) => {
