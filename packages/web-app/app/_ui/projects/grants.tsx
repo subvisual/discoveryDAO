@@ -22,19 +22,15 @@ const DecryptButton = ({ dataId }: { dataId: string }) => {
   const getAccessGrants = getAccessGrantsContentDecrypted.bind(null, dataId);
   const [state, dispatch] = useFormState(getAccessGrants, initialState);
 
-  console.log(
-    '%c==>',
-    'color: green; background: yellow; font-size: 20px',
-    state,
-  );
-
   return (
     <>
       <form action={dispatch}>
         <Button type="submit">Decrypt</Button>
       </form>
       {state?.content ? (
-        <pre className="mt-5">${json(JSON.parse(state.content))}</pre>
+        <pre className="mt-5 flex overflow-auto bg-slate-400">
+          ${json(JSON.parse(state.content))}
+        </pre>
       ) : null}
     </>
   );
@@ -42,12 +38,6 @@ const DecryptButton = ({ dataId }: { dataId: string }) => {
 
 export const Grants = ({ serverInfo }: TGrantsProps) => {
   const { data: grants } = useFetchGrants(serverInfo.grantee);
-
-  console.log(
-    '%c==>',
-    'color: green; background: yellow; font-size: 20px',
-    serverInfo.grantee,
-  );
 
   if (!grants?.length) return null;
 

@@ -28,11 +28,6 @@ export const AcquireAccessGrantButton = ({
         Math.floor(Date.now() / 1000) + serverInfo.lockTimeSpanSeconds,
         serverInfo.encryptionPublicKey,
       );
-      console.log(
-        '%c==>',
-        'color: green; background: yellow; font-size: 20px',
-        grant,
-      );
     } catch (error) {
       console.log(
         '%c==>',

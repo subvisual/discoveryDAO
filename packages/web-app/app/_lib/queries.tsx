@@ -2,9 +2,11 @@ import { useQuery } from '@tanstack/react-query';
 import { useIdOS } from '../_providers/idos';
 import { idOSCredential } from '../_types/idos';
 import { useAccount } from 'wagmi';
+// import { idOS } from '@idos-network/idos-sdk';
 
 export const useFetchIdOSProfile = () => {
   const { sdk } = useIdOS();
+
   return useQuery({
     queryKey: ['idos-profile'],
     queryFn: () => sdk?.auth?.currentUser(),
@@ -29,6 +31,33 @@ export const useFetchCredentials = () => {
     },
     select: (credentials) =>
       credentials.filter((credential) => !credential.original_id),
+  });
+};
+
+export const useFetchCredentialContent = (credentialId: string) => {
+  const { sdk } = useIdOS();
+
+  return useQuery({
+    queryKey: ['credential-content', credentialId],
+    queryFn: async () => {
+      if (!sdk) return;
+
+      const credential = await sdk.data.get('credentials', credentialId);
+
+      if (!credential) return '';
+
+      // check if this step is really needed
+      // const verified = await idOS.verifiableCredentials.verify(credential?.content);
+
+      // console.log(
+      //   '%c==>Verify Credential:',
+      //   'color: green; background: yellow; font-size: 20px',
+      //   verified,
+      // );
+
+      return JSON.parse(credential?.content as string);
+    },
+    enabled: !!credentialId,
   });
 };
 
