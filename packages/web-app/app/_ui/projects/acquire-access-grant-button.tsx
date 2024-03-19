@@ -2,6 +2,7 @@
 import { Button } from '../components';
 import { PublicInfo } from '@/app/_server/types';
 import { useIdOS } from '@/app/_providers/idos';
+import { useAcquireAccessGrantMutation } from '@/app/_lib/actions';
 
 type AcquireAccessGrantButton = {
   id: string;
@@ -16,17 +17,21 @@ export const AcquireAccessGrantButton = ({
   serverInfo: PublicInfo;
 }) => {
   const { sdk } = useIdOS();
+  const acquireAccessGrant = useAcquireAccessGrantMutation();
 
   if (!sdk || !serverInfo) return null;
 
   const onClick = async () => {
     try {
-      const grant = await sdk.grants.create(
-        'credentials',
+      const grant = await acquireAccessGrant.mutateAsync({
         id,
-        serverInfo.grantee,
-        Math.floor(Date.now() / 1000) + serverInfo.lockTimeSpanSeconds,
-        serverInfo.encryptionPublicKey,
+        serverInfo,
+      });
+
+      console.log(
+        '%c==>GRANT',
+        'color: green; background: yellow; font-size: 20px',
+        grant,
       );
     } catch (error) {
       console.log(
@@ -36,6 +41,13 @@ export const AcquireAccessGrantButton = ({
       );
     }
   };
+
+  if (acquireAccessGrant.isPending)
+    return (
+      <Button variant="primary-disabled" disabled>
+        Creating...
+      </Button>
+    );
 
   return <Button onClick={onClick}>Create AC to this app</Button>;
 };

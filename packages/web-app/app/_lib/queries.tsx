@@ -1,7 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { useIdOS } from '../_providers/idos';
 import { idOSCredential } from '../_types/idos';
-import { useAccount } from 'wagmi';
 // import { idOS } from '@idos-network/idos-sdk';
 
 export const useFetchIdOSProfile = () => {
@@ -39,10 +38,12 @@ export const useFetchCredentialContent = (credentialId: string) => {
 
   return useQuery({
     queryKey: ['credential-content', credentialId],
-    queryFn: async () => {
+    queryFn: async ({ queryKey: [, credentialId] }) => {
       if (!sdk) return;
 
-      const credential = await sdk.data.get('credentials', credentialId);
+      const credential = await sdk.data.get<
+        idOSCredential & { content: string }
+      >('credentials', credentialId);
 
       if (!credential) return '';
 
@@ -55,7 +56,7 @@ export const useFetchCredentialContent = (credentialId: string) => {
       //   verified,
       // );
 
-      return JSON.parse(credential?.content as string);
+      return JSON.parse(credential?.content);
     },
     enabled: !!credentialId,
   });
@@ -71,8 +72,7 @@ export const useFetchWallets = () => {
 };
 
 export const useFetchGrants = (grantee: string) => {
-  const { sdk } = useIdOS();
-  const { address } = useAccount();
+  const { sdk, address } = useIdOS();
 
   return useQuery({
     queryKey: ['grants', address, grantee],
