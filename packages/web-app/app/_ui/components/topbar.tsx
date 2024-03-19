@@ -31,7 +31,7 @@ export function Topbar() {
   return (
     <header
       className={clsx(
-        'sticky top-0 flex flex-row justify-between px-6 py-5 transition-all duration-500 md:justify-normal md:px-28 md:py-6',
+        'sticky top-0 flex flex-row justify-between px-6 py-5 transition-all duration-100 md:justify-normal md:px-28 md:py-6',
         scrollPosition > 40 && 'bg-navy-dark',
       )}
     >

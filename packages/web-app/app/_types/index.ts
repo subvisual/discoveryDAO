@@ -9,7 +9,7 @@ export type Project = {
   project: string;
   targetedRaise: number;
   supplySold: number;
-  votes: number;
   urlId?: string;
+  endDate: Date;
   startDate: Date;
 };

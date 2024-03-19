@@ -23,6 +23,7 @@ const config: Config = {
         '20': '5rem',
       },
       colors: {
+        'white-anti-flash': '#F2F4F8',
         'navy-dark': '#0B1018',
         white: '#FFF',
         'blue-light': '#8CA5F9',
