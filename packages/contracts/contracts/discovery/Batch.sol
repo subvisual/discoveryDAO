@@ -120,7 +120,7 @@ contract Batch is IBatch, ICommon, ProjectVoting {
         return 0;
     }
 
-    function inInvestmentPeriod() external returns (bool) {
+    function inInvestmentPeriod() external view returns (bool) {
         return
             votingPeriod.start >= block.timestamp &&
             investmentEnd <= block.timestamp;

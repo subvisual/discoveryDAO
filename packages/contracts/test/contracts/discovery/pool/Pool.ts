@@ -11,6 +11,8 @@ import {
   TestPool__factory,
 } from "../../../../src/types";
 
+import { goToTime, currentTimestamp } from "../../../timeHelpers";
+
 const { parseUnits } = ethers.utils;
 const { MaxUint256 } = ethers.constants;
 
@@ -20,22 +22,30 @@ describe("Pool", () => {
   let bob: SignerWithAddress;
 
   let aUSD: MockERC20;
+  let projectToken: MockERC20;
   let project: MockProject;
-
   let pool: TestPool;
+
+  let oneDay: number;
 
   beforeEach(async () => {
     [owner, alice, bob] = await ethers.getSigners();
 
     aUSD = await new MockERC20__factory(owner).deploy("aUSD", "aUSD", 12);
-    project = await new MockProject__factory(owner).deploy();
-    await project.test_createStakersPool(1000, aUSD.address);
+    projectToken = await new MockERC20__factory(owner).deploy("PT", "PT", 18);
+    project = await new MockProject__factory(owner).deploy(
+      projectToken.address
+    );
+    await project.test_createStakersPool(1000, aUSD.address, 0, 3);
     pool = TestPool__factory.connect(await project.stakersPool(), owner);
 
+    await projectToken.mint(project.address, parseUnits("1000000000"));
     await aUSD.mint(alice.address, parseUnits("10000"));
     await aUSD.mint(bob.address, parseUnits("10000"));
     await aUSD.connect(alice).approve(pool.address, MaxUint256);
     await aUSD.connect(bob).approve(pool.address, MaxUint256);
+
+    oneDay = 60 * 60 * 24;
   });
 
   describe("constructor", () => {
@@ -120,7 +130,95 @@ describe("Pool", () => {
   });
 
   describe("withdraw", () => {
-    it("TODO similar tests from Sale.sol");
+    it("withdraws the available tokens", async () => {
+      const vestingStart = (await currentTimestamp()) + oneDay;
+      await pool.mock_setVestingStart(vestingStart);
+      await project.connect(alice).invest(0, 100);
+      await pool.setIndividualCap(100, { gasLimit: 10000000 });
+      await goToTime(vestingStart + oneDay * 30 * 4);
+
+      await project.withdraw(alice.address);
+
+      expect(await projectToken.balanceOf(alice.address)).to.equal(100);
+    });
+
+    it("does not allow double withdraw of the same funds", async () => {
+      const vestingStart = (await currentTimestamp()) + oneDay;
+      await pool.mock_setVestingStart(vestingStart);
+      await project.connect(alice).invest(0, 100);
+      await pool.setIndividualCap(100, { gasLimit: 10000000 });
+      await goToTime(vestingStart + oneDay * 30 * 4);
+
+      await project.withdraw(alice.address);
+
+      await expect(project.withdraw(alice.address)).to.be.revertedWith(
+        "No withdrawable amount"
+      );
+    });
+  });
+
+  describe("withdrawable", () => {
+    it("is non zero after one vesting month", async () => {
+      const vestingStart = (await currentTimestamp()) + oneDay;
+      await pool.mock_setVestingStart(vestingStart);
+      await project.connect(alice).invest(0, 100);
+      await pool.setIndividualCap(100, { gasLimit: 10000000 });
+
+      await goToTime(vestingStart);
+
+      expect(await pool.withdrawable(alice.address)).to.equal(33);
+    });
+
+    it("is zero while vesting period does not start", async () => {
+      const vestingStart = (await currentTimestamp()) + oneDay;
+      await pool.mock_setVestingStart(vestingStart);
+      await project.connect(alice).invest(0, 100);
+      await pool.setIndividualCap(100, { gasLimit: 10000000 });
+
+      expect(await pool.withdrawable(alice.address)).to.equal(0);
+    });
+
+    it("is zero during the cliff period", async () => {
+      await project.test_createStakersPool(1000, aUSD.address, 1, 3);
+      pool = TestPool__factory.connect(await project.stakersPool(), owner);
+      await aUSD.connect(alice).approve(pool.address, MaxUint256);
+      const vestingStart = (await currentTimestamp()) + oneDay;
+      await pool.mock_setVestingStart(vestingStart);
+      await project.connect(alice).invest(0, 100);
+      await pool.setIndividualCap(100, { gasLimit: 10000000 });
+
+      await goToTime(vestingStart);
+
+      expect(await pool.withdrawable(alice.address)).to.equal(0);
+    });
+
+    it("allows me to claim some amount tokens after the full cliff period", async () => {
+      await project.test_createStakersPool(1000, aUSD.address, 1, 3);
+      pool = TestPool__factory.connect(await project.stakersPool(), owner);
+      await aUSD.connect(alice).approve(pool.address, MaxUint256);
+      const vestingStart = (await currentTimestamp()) + oneDay;
+      await pool.mock_setVestingStart(vestingStart);
+      await project.connect(alice).invest(0, 100);
+      await pool.setIndividualCap(100, { gasLimit: 10000000 });
+
+      await goToTime(vestingStart + oneDay * 30);
+
+      expect(await pool.withdrawable(alice.address)).to.equal(33);
+    });
+
+    it("allows me to claim 100% after the full cliff and vesting period", async () => {
+      await project.test_createStakersPool(1000, aUSD.address, 1, 3);
+      pool = TestPool__factory.connect(await project.stakersPool(), owner);
+      await aUSD.connect(alice).approve(pool.address, MaxUint256);
+      const vestingStart = (await currentTimestamp()) + oneDay;
+      await pool.mock_setVestingStart(vestingStart);
+      await project.connect(alice).invest(0, 100);
+      await pool.setIndividualCap(100, { gasLimit: 10000000 });
+
+      await goToTime(vestingStart + oneDay * 30 * 5);
+
+      expect(await pool.withdrawable(alice.address)).to.equal(100);
+    });
   });
 
   describe("refundableAmount", () => {

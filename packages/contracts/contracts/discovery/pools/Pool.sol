@@ -7,6 +7,7 @@ import {SafeERC20} from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol
 import {IPool} from "../interfaces/IPool.sol";
 import {IProject} from "../interfaces/IProject.sol";
 import {RisingTide} from "../../RisingTide/RisingTide.sol";
+import {DateTime} from "../../libraries/DateTime.sol";
 
 import "hardhat/console.sol";
 
@@ -18,6 +19,7 @@ import "hardhat/console.sol";
  * TODO other than these requirements, the rest should be very similar to the CTND Sale contract
  */
 abstract contract Pool is IPool, RisingTide {
+    using DateTime for uint256;
     using SafeERC20 for IERC20;
 
     struct Investor {
@@ -55,10 +57,22 @@ abstract contract Pool is IPool, RisingTide {
     // Total supply of the project's token up for sale
     uint256 public immutable saleSupply;
 
-    constructor(uint256 _saleSupply, address _investmentToken) {
+    uint256 public cliffMonths;
+    uint256 public vestingMonths;
+    uint256 public vestingStart;
+
+    constructor(
+        uint256 _saleSupply,
+        address _investmentToken,
+        uint256 _cliffMonths,
+        uint256 _vestingMonths
+    ) {
         project = msg.sender;
         saleSupply = _saleSupply;
         investmentToken = _investmentToken;
+        cliffMonths = _cliffMonths;
+        vestingMonths = _vestingMonths;
+        vestingStart = block.timestamp;
     }
 
     modifier onlyProject() {
@@ -136,6 +150,44 @@ abstract contract Pool is IPool, RisingTide {
         return IProject(project).tokenToInvestmentToken(uncapped - capped);
     }
 
+    function withdrawn(address _to)
+        public
+        view
+        virtual
+        override(IPool)
+        returns (uint256)
+    {
+        revert("not implemented");
+    }
+
+    function withdrawable(address to)
+        public
+        view
+        override(IPool)
+        returns (uint256)
+    {
+        uint256 localWithdrawn = withdrawn(to);
+        uint256 total = allocation(to);
+        uint256 elapsed = _numberOfPeriodsElapsed();
+        uint256 cliff = cliffMonths;
+        uint256 vesting = vestingMonths;
+
+        if (total == 0) {
+            return 0;
+        }
+
+        if (cliff >= elapsed) {
+            return 0;
+        }
+
+        if (elapsed >= vesting + cliff) {
+            return total - localWithdrawn;
+        }
+
+        uint256 perMonth = total / vesting;
+        return (perMonth * (elapsed - cliff)) - localWithdrawn;
+    }
+
     /// @inheritdoc IPool
     function uncappedAllocation(address _to)
         external
@@ -200,5 +252,44 @@ abstract contract Pool is IPool, RisingTide {
         returns (uint256)
     {
         return saleSupply;
+    }
+
+    //
+    // Internal API
+    //
+
+    /**
+     * Calculates the number of periods elapsed since the cliff start.
+     *
+     * Each period is the beginning of each month and will be passed in as a
+     * parameter to the contract
+     *
+     * @return The number of periods elapsed since the cliff start
+     */
+    function _numberOfPeriodsElapsed() internal view returns (uint256) {
+        uint256 startTime = vestingStart;
+        if (startTime == 0) {
+            return 0;
+        }
+
+        if (block.timestamp < startTime) {
+            return 0;
+        } else {
+            uint256 beginningOfMonth = DateTime.timestampFromDate(
+                block.timestamp.getYear(),
+                block.timestamp.getMonth(),
+                1
+            );
+            uint256 beginningOfMonthStartTime = DateTime.timestampFromDate(
+                startTime.getYear(),
+                startTime.getMonth(),
+                1
+            );
+            return
+                DateTime.diffMonths(
+                    beginningOfMonthStartTime,
+                    beginningOfMonth
+                ) + 1;
+        }
     }
 }
