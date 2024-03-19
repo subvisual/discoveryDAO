@@ -5,18 +5,23 @@
 body {
   @apply text-font-color;
   @apply text-base;
+  @apply font-light;
+}
+
+h1 {
+  @apply text-5.75xl;
+  @apply font-medium;
 }
 
 h2 {
-  @apply text-5.5xl;
-  @apply font-bold;
-  @apply leading-18;
+  @apply text-3.5xl;
+  @apply font-medium;
 }
 
 h3 {
-  @apply text-4xl;
-  @apply font-bold;
-  @apply leading-14;
+  @apply font-medium;
+  @apply text-base;
+  @apply uppercase;
 }
 
 input[type='number'] {

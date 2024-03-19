@@ -13,11 +13,14 @@ const config: Config = {
         'background-pattern-overlay': 'url("/background-pattern-overlay.png")',
       },
       fontSize: {
+        '3.5xl': ['2rem', '2.5rem'],
         '5.5xl': ['3.25rem', '3.75rem'],
+        '5.75xl': ['3.5rem', '5rem'],
       },
       lineHeight: {
         '14': '3.5rem',
         '18': '4.5rem',
+        '20': '5rem',
       },
       colors: {
         white: '#FFF',
