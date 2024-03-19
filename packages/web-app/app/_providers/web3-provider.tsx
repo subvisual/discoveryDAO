@@ -9,7 +9,7 @@ import {
   type Theme,
 } from '@rainbow-me/rainbowkit';
 import { TChildren } from '@/app/_types';
-import { sora } from '../_ui/fonts';
+import { nohemi } from '../_ui/fonts';
 import merge from 'lodash.merge';
 
 const config = getDefaultConfig({
@@ -33,7 +33,7 @@ const customTheme = merge(
   }),
   {
     fonts: {
-      body: sora.style.fontFamily,
+      body: nohemi.style.fontFamily,
     },
   },
 ) as Theme;

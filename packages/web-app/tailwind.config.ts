@@ -10,7 +10,7 @@ const config: Config = {
     extend: {
       backgroundImage: {
         'background-pattern': 'url("/background-pattern.png")',
-        'background-pattern-overlay': 'url("/background-pattern-overlay.svg")',
+        'background-pattern-overlay': 'url("/background-pattern-overlay.png")',
       },
       fontSize: {
         '5.5xl': ['3.25rem', '3.75rem'],

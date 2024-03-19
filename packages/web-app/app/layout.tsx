@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { sora } from '@/app/_ui/fonts';
+import { nohemi } from '@/app/_ui/fonts';
 import '@rainbow-me/rainbowkit/styles.css';
 import './_ui/global.css';
 import { Footer, Topbar } from '@/app/_ui/components';
@@ -37,7 +37,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${sora.className}`}>
+      <body className={`${nohemi.className}`}>
         <Providers>
           <div className="flex min-h-screen flex-col bg-background-pattern bg-cover bg-no-repeat antialiased">
             <Topbar />
