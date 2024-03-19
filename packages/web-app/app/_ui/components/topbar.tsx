@@ -1,11 +1,40 @@
+'use client';
+
 import Image from 'next/image';
 
 import { WalletButton } from '@/app/_ui/components';
 import { NavLink } from './nav-link';
+import { useEffect, useState } from 'react';
+import clsx from 'clsx';
+
+export const useScrollPosition = () => {
+  const [scrollPosition, setScrollPosition] = useState(0);
+
+  useEffect(() => {
+    const updatePosition = () => {
+      setScrollPosition(window.scrollY);
+    };
+
+    window.addEventListener('scroll', updatePosition);
+
+    updatePosition();
+
+    return () => window.removeEventListener('scroll', updatePosition);
+  }, []);
+
+  return scrollPosition;
+};
 
 export function Topbar() {
+  const scrollPosition = useScrollPosition();
+
   return (
-    <header className="flex flex-row justify-between bg-white px-6 py-5 md:justify-normal md:px-28 md:py-6">
+    <header
+      className={clsx(
+        'sticky top-0 flex flex-row justify-between px-6 py-5 transition-all duration-500 md:justify-normal md:px-28 md:py-6',
+        scrollPosition > 40 && 'bg-navy-dark',
+      )}
+    >
       <Image
         src="/citizend-logo.svg"
         alt="Citizend Logo"
@@ -22,10 +51,10 @@ export function Topbar() {
         priority
         className="md:hidden"
       />
-      <div className="ml-20 hidden flex-grow items-center gap-8 md:flex">
+      <nav className="ml-20 hidden flex-grow items-center gap-8 md:flex">
         <NavLink href="/" name="All Projects" className="" />
         <NavLink href="/projects/my-projects" name="My Projects" />
-      </div>
+      </nav>
       <WalletButton />
     </header>
   );

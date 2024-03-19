@@ -16,14 +16,11 @@ export const NavLink = ({ href, name, className }: TNavLinkProps) => {
   return (
     <Link
       href={href}
-      className={clsx(
-        'p-3 font-semibold uppercase text-font-color-light',
-        className,
-      )}
+      className={clsx('p-3 font-medium uppercase text-white', className)}
     >
       <span
         className={clsx({
-          'relative flex items-center text-grey-dark before:absolute before:-left-4 before:top-1.5 before:block before:h-2 before:w-2 before:rotate-45 before:bg-blue':
+          'relative flex items-center text-white before:absolute before:-left-4 before:top-1.5 before:block before:h-2 before:w-2 before:rotate-45 before:bg-blue':
             pathname === href,
         })}
       >

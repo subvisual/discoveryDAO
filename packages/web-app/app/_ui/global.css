@@ -11,17 +11,21 @@ body {
 h1 {
   @apply text-5.75xl;
   @apply font-medium;
+  @apply text-white;
 }
 
 h2 {
   @apply text-3.5xl;
   @apply font-medium;
+  @apply text-white;
 }
 
 h3 {
   @apply font-medium;
   @apply text-base;
   @apply uppercase;
+    @apply text-white;
+
 }
 
 input[type='number'] {

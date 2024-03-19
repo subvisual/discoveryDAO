@@ -154,7 +154,7 @@ const NavigationMenu = ({ title, items, row }: TNavigationMenu) => {
 
 export function Footer() {
   return (
-    <footer aria-labelledby="footer-heading">
+    <footer className="bg-background-pattern" aria-labelledby="footer-heading">
       <div className="flex flex-col flex-wrap items-center p-6 md:flex-row md:items-start md:justify-between md:px-27 md:py-14">
         <h2 id="footer-heading" className="sr-only">
           Footer

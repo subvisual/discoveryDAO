@@ -23,6 +23,7 @@ const config: Config = {
         '20': '5rem',
       },
       colors: {
+        'navy-dark': '#0B1018',
         white: '#FFF',
         'blue-light': '#8CA5F9',
         blue: '#3F69F5',
