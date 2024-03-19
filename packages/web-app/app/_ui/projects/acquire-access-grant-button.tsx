@@ -27,12 +27,6 @@ export const AcquireAccessGrantButton = ({
         id,
         serverInfo,
       });
-
-      console.log(
-        '%c==>GRANT',
-        'color: green; background: yellow; font-size: 20px',
-        grant,
-      );
     } catch (error) {
       console.log(
         '%c==>',
