@@ -70,10 +70,10 @@ contract Project is IProject, ERC165 {
         uint256 peoplesPoolSupply = saleSupply - stakersPoolSupply;
 
         stakersPool = address(
-            new StakersPool(stakersPoolSupply, _investmentToken)
+            new StakersPool(stakersPoolSupply, _investmentToken, controller)
         );
         peoplesPool = address(
-            new PeoplesPool(peoplesPoolSupply, _investmentToken)
+            new PeoplesPool(peoplesPoolSupply, _investmentToken, controller)
         );
     }
 
@@ -158,6 +158,15 @@ contract Project is IProject, ERC165 {
         returns (uint256)
     {
         return (_amount * rate) / MUL;
+    }
+
+    /// @inheritdoc IProject
+    function getPools()
+        external
+        view
+        returns (address peoplesPool, address stakersPool)
+    {
+        return (peoplesPool, stakersPool);
     }
 
     //

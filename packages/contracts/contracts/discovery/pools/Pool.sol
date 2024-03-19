@@ -1,14 +1,13 @@
 // SPDX-License-Identifier: MIT
 pragma solidity =0.8.12;
 
-import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import {SafeERC20} from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 
 import {IPool} from "../interfaces/IPool.sol";
 import {IProject} from "../interfaces/IProject.sol";
 import {RisingTide} from "../../RisingTide/RisingTide.sol";
 
-import "hardhat/console.sol";
+import {Controller} from "../Controller.sol";
 
 /**
  * TODO users should be able to `buy` into the pool, as long as they meet the conditions
@@ -40,6 +39,8 @@ abstract contract Pool is IPool, RisingTide {
 
     /// The address of the investment token contract (likely $aUSD)
     address public immutable investmentToken;
+    address controller;
+    uint256 investedAmount;
 
     /// total unique investors
     uint256 _investorCount;
@@ -55,10 +56,15 @@ abstract contract Pool is IPool, RisingTide {
     // Total supply of the project's token up for sale
     uint256 public immutable saleSupply;
 
-    constructor(uint256 _saleSupply, address _investmentToken) {
+    constructor(
+        uint256 _saleSupply,
+        address _investmentToken,
+        address _controller
+    ) {
         project = msg.sender;
         saleSupply = _saleSupply;
         investmentToken = _investmentToken;
+        controller = _controller;
     }
 
     modifier onlyProject() {
@@ -70,6 +76,11 @@ abstract contract Pool is IPool, RisingTide {
     /// Ensures the individual cap is already calculated
     modifier capCalculated() {
         require(risingTide_isValidCap(), "cap not yet set");
+        _;
+    }
+
+    modifier onlyController() {
+        require(msg.sender == controller, "not controller");
         _;
     }
 
@@ -97,6 +108,13 @@ abstract contract Pool is IPool, RisingTide {
             _investor,
             address(this),
             _amount
+        );
+
+        require(
+            IERC20(Controller(controller).paymentToken()).balanceOf(
+                address(this)
+            ) >= investedAmount + _amount,
+            "no tokens were transfered"
         );
     }
 
