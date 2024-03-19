@@ -14,28 +14,6 @@ const navigation = {
   ],
   social: [
     {
-      name: 'X',
-      href: '#',
-      icon: (props: React.SVGProps<SVGSVGElement>) => (
-        <svg fill="currentColor" viewBox="0 0 24 24" {...props}>
-          <path d="M13.6823 10.6218L20.2391 3H18.6854L12.9921 9.61788L8.44486 3H4.2002L10.0765 13.0074L3.2002 21H4.75404L10.7663 14.0113L15.5685 21H20.8131L13.6819 10.6218H13.6823ZM11.5541 13.0956L10.8574 12.0991L5.31391 4.16971H7.70053L12.1742 10.5689L12.8709 11.5655L18.6861 19.8835H16.2995L11.5541 13.096V13.0956Z" />
-        </svg>
-      ),
-    },
-    {
-      name: 'GitHub',
-      href: '#',
-      icon: (props: React.SVGProps<SVGSVGElement>) => (
-        <svg fill="currentColor" viewBox="0 0 24 24" {...props}>
-          <path
-            fillRule="evenodd"
-            d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"
-            clipRule="evenodd"
-          />
-        </svg>
-      ),
-    },
-    {
       name: 'Gitbook',
       href: '#',
       icon: (props: React.SVGProps<SVGSVGElement>) => (
@@ -78,6 +56,28 @@ const navigation = {
           />
           <path
             d="M25.5934 14.8488C24.547 14.3877 23.4428 14.0587 22.3083 13.8698C22.298 13.8682 22.2874 13.8696 22.2781 13.8739C22.2687 13.8783 22.2609 13.8853 22.2558 13.894C22.1136 14.1361 21.9563 14.4527 21.8463 14.7006C20.6234 14.5225 19.3796 14.5225 18.1567 14.7006C18.0341 14.4245 17.8953 14.1552 17.7411 13.894C17.736 13.8854 17.7282 13.8784 17.7188 13.8741C17.7095 13.8698 17.6989 13.8683 17.6887 13.8698C16.554 14.0577 15.4495 14.3869 14.4035 14.8488C14.3946 14.852 14.3871 14.8582 14.3823 14.8662C12.2904 17.867 11.7165 20.7941 11.9979 23.6845C11.9989 23.6981 12.008 23.7116 12.0191 23.7203C13.2372 24.5866 14.5998 25.248 16.0486 25.6763C16.0588 25.6794 16.0698 25.6793 16.08 25.676C16.0902 25.6727 16.099 25.6663 16.1051 25.6579C16.4158 25.2512 16.6921 24.8223 16.9302 24.371C16.9351 24.3617 16.9368 24.3512 16.935 24.3409C16.9332 24.3306 16.928 24.3211 16.9201 24.3139C16.9149 24.3092 16.9087 24.3056 16.9019 24.3033C16.4674 24.1429 16.0465 23.9503 15.6431 23.7271C15.6319 23.721 15.6235 23.7109 15.6197 23.699C15.616 23.6871 15.6171 23.6743 15.623 23.6632C15.6264 23.656 15.6316 23.6497 15.6381 23.6448C15.7228 23.5838 15.8076 23.5199 15.8882 23.456C15.8954 23.4505 15.9039 23.447 15.913 23.4458C15.922 23.4446 15.9313 23.4458 15.9397 23.4492C18.5813 24.6073 21.4408 24.6073 24.0502 23.4492C24.0589 23.4456 24.0685 23.4443 24.0779 23.4455C24.0873 23.4467 24.0962 23.4503 24.1037 23.456C24.1844 23.5199 24.2691 23.5838 24.3538 23.6448C24.3607 23.6496 24.3662 23.656 24.3699 23.6634C24.3735 23.6707 24.3753 23.6789 24.3749 23.687C24.3745 23.6952 24.372 23.7031 24.3676 23.7101C24.3632 23.7171 24.3571 23.7229 24.3498 23.7271C23.9474 23.9523 23.5259 24.1447 23.09 24.3023C23.083 24.3047 23.0767 24.3086 23.0715 24.3136C23.0663 24.3186 23.0622 24.3247 23.0597 24.3313C23.0574 24.3378 23.0565 24.3447 23.057 24.3515C23.0575 24.3583 23.0595 24.365 23.0628 24.371C23.3048 24.8213 23.5822 25.2512 23.8868 25.6579C23.893 25.6663 23.9018 25.6727 23.9119 25.676C23.9221 25.6793 23.9331 25.6794 23.9433 25.6763C25.3946 25.2493 26.7593 24.5878 27.9789 23.7203C27.985 23.7163 27.9901 23.711 27.9938 23.7048C27.9974 23.6985 27.9996 23.6916 28.0001 23.6845C28.337 20.3429 27.4362 17.4399 25.6136 14.8672C25.6118 14.8629 25.609 14.8591 25.6056 14.8559C25.6021 14.8527 25.598 14.8503 25.5934 14.8488ZM17.3246 21.9241C16.5287 21.9241 15.8741 21.2231 15.8741 20.3632C15.8741 19.5024 16.5166 18.8014 17.3246 18.8014C18.1385 18.8014 18.7871 19.5082 18.775 20.3632C18.775 21.2231 18.1325 21.9241 17.3246 21.9241ZM22.6865 21.9241C21.8917 21.9241 21.2361 21.2231 21.2361 20.3632C21.2361 19.5024 21.8786 18.8014 22.6865 18.8014C23.5005 18.8014 24.1501 19.5082 24.137 20.3632C24.137 21.2231 23.5005 21.9241 22.6865 21.9241Z"
+            fill="white"
+          />
+        </svg>
+      ),
+    },
+    {
+      name: 'X',
+      href: '#',
+      icon: (props: React.SVGProps<SVGSVGElement>) => (
+        <svg
+          width="40"
+          height="40"
+          viewBox="0 0 40 40"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M28.0817 0L33.9108 5.84556L39.8572 11.5717L39.8456 19.827L40.0013 28.0807L34.1557 33.9098L28.4295 39.8562L20.1743 39.8446L11.9205 40.0003L6.09145 34.1547L0.145049 28.4286L0.156693 20.1733L0.000976562 11.9196L5.84654 6.09047L11.5727 0.144073L19.8279 0.155717L28.0817 0Z"
+            fill="currentColor"
+          />
+          <path
+            d="M21.3174 18.7749L27.1457 12H25.7646L20.7039 17.8826L16.6619 12H12L18.1122 20.8955L12 28H13.3812L18.7254 21.7878L22.994 28H27.656L21.3174 18.7749ZM19.4257 20.9738L18.8064 20.0881L13.8789 13.0397H16.0003L19.9769 18.728L20.5962 19.6137L25.7652 27.0075H23.6438L19.4257 20.9738Z"
             fill="white"
           />
         </svg>
@@ -133,11 +133,16 @@ type TNavigationMenu = {
 
 const NavigationMenu = ({ title, items, row }: TNavigationMenu) => {
   return (
-    <div className="">
-      <h4 className="text-base font-semibold text-white">{title}</h4>
+    <div>
+      <h4 className="hidden text-base font-semibold text-white md:block">
+        {title}
+      </h4>
       <ul
         role="list"
-        className={clsx('mt-6 flex gap-4', row ? 'flex-row' : 'flex-col')}
+        className={clsx(
+          'mt-6 flex items-center gap-4 md:items-start',
+          row ? 'flex-row' : 'flex-col',
+        )}
       >
         {items.map((item) => (
           <NavigationItem key={item.name} {...item} />
@@ -148,26 +153,36 @@ const NavigationMenu = ({ title, items, row }: TNavigationMenu) => {
 };
 
 export function Footer() {
-  //108 56
   return (
-    <footer
-      aria-labelledby="footer-heading"
-      className="flex flex-col flex-wrap justify-between px-27 py-14 md:flex-row"
-    >
-      <h2 id="footer-heading" className="sr-only">
-        Footer
-      </h2>
-      <Image
-        src="/citizend-logo-framed.svg"
-        alt="Citizend logo"
-        width={260}
-        height={228}
-        priority
-      />
-      <div className="flex flex-col gap-16 md:flex-row">
-        <NavigationMenu title="Information" items={navigation.information} />
-        <NavigationMenu title="Resources" items={navigation.resources} />
-        <NavigationMenu title="Social" items={navigation.social} row />
+    <footer aria-labelledby="footer-heading">
+      <div className="flex flex-col flex-wrap items-center p-6 md:flex-row md:items-start md:justify-between md:px-27 md:py-14">
+        <h2 id="footer-heading" className="sr-only">
+          Footer
+        </h2>
+        <Image
+          src="/citizend-logo-framed.svg"
+          alt="Citizend logo"
+          width={260}
+          height={228}
+          priority
+          className="w-[169px] md:w-[260px]"
+        />
+        <div className="mt-11 flex flex-col items-center md:mt-10 md:flex-row md:items-start md:gap-16 xl:mt-0">
+          <NavigationMenu title="Information" items={navigation.information} />
+          <NavigationMenu title="Resources" items={navigation.resources} />
+          <NavigationMenu title="Social" items={navigation.social} row />
+        </div>
+      </div>
+      <div className="flex flex-col items-center gap-2 px-6 pb-6 pt-12 md:flex-row-reverse md:justify-end md:gap-0 md:px-27 md:py-14">
+        <span className="font-semibold text-white md:ml-14 md:font-medium md:text-grey">
+          Privacy Policy
+        </span>
+        <span className="font-semibold text-white md:ml-36 md:font-medium md:text-grey">
+          Terms & Conditions
+        </span>
+        <span className=" text-grey">
+          © 2022 citizend. All rights reserved.
+        </span>
       </div>
     </footer>
   );
