@@ -58,7 +58,7 @@ const DesktopTable = () => {
               return (
                 <td
                   key={header.id}
-                  className="p-6 font-semibold uppercase text-font-color-light"
+                  className="p-6 font-medium uppercase text-font-color-light"
                 >
                   {flexRender(
                     header.column.columnDef.header,

@@ -27,7 +27,7 @@ export const columns = [
     cell: (info) => (
       <Link
         href={`/projects/${info.row.original.urlId}`}
-        className="font-semibold"
+        className="font-medium"
       >
         {info.getValue()}
       </Link>
@@ -54,7 +54,7 @@ export const desktopUpcoming = [
     cell: (info) => (
       <Link
         href={`/projects/${info.row.original.urlId}`}
-        className="font-semibold"
+        className="font-medium"
       >
         {info.getValue()}
       </Link>
@@ -77,7 +77,7 @@ export const mobileUpcoming = [
     cell: (info) => (
       <Link
         href={`/projects/${info.row.original.urlId}`}
-        className="font-semibold"
+        className="font-medium"
       >
         {info.getValue()}
       </Link>

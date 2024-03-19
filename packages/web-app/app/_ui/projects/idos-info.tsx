@@ -28,7 +28,7 @@ export const IdosInfo = ({ serverInfo }: TIdosInfoProps) => {
   return (
     <div className="mt-2">
       <h3>Idos</h3>
-      <h4 className="my-4 font-semibold">Wallets</h4>
+      <h4 className="my-4 font-medium">Wallets</h4>
       {wallets?.map((wallet) => (
         <div key={wallet.id}>
           <p>
@@ -41,7 +41,7 @@ export const IdosInfo = ({ serverInfo }: TIdosInfoProps) => {
           </p>
         </div>
       ))}
-      <h4 className="mt-6 font-semibold">Credentials</h4>
+      <h4 className="mt-6 font-medium">Credentials</h4>
       {data?.map((credential) => (
         <div key={credential.id} className="flex flex-col gap-2 py-4">
           <p>

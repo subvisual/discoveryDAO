@@ -34,7 +34,7 @@ export function Button({
       disabled={disabled}
       onClick={onClick}
       className={clsx(
-        'focus-visible:outline-offset hover:shadow-button inline-flex select-none items-center justify-center rounded-md p-4 font-semibold',
+        'focus-visible:outline-offset hover:shadow-button inline-flex select-none items-center justify-center rounded-md p-4 font-medium',
         variantClasses[variant],
         className,
       )}

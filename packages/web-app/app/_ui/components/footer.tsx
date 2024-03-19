@@ -112,7 +112,7 @@ const NavigationItem = ({ name, href, icon: Icon }: TNavigationItem) => {
   return (
     <li key={name}>
       {Icon ? (
-        <a href={href} className="font-semibold text-grey-dark hover:text-blue">
+        <a href={href} className="font-medium text-grey-dark hover:text-blue">
           <span className="sr-only">{name}</span>
           <Icon className="h-10 w-10" aria-hidden="true" />
         </a>
@@ -134,7 +134,7 @@ type TNavigationMenu = {
 const NavigationMenu = ({ title, items, row }: TNavigationMenu) => {
   return (
     <div>
-      <h4 className="hidden text-base font-semibold text-white md:block">
+      <h4 className="hidden text-base font-medium text-white md:block">
         {title}
       </h4>
       <ul
@@ -174,10 +174,10 @@ export function Footer() {
         </div>
       </div>
       <div className="flex flex-col items-center gap-2 px-6 pb-6 pt-12 md:flex-row-reverse md:justify-end md:gap-0 md:px-27 md:py-14">
-        <span className="font-semibold text-white md:ml-14 md:font-medium md:text-grey">
+        <span className="font-medium text-white md:ml-14 md:font-medium md:text-grey">
           Privacy Policy
         </span>
-        <span className="font-semibold text-white md:ml-36 md:font-medium md:text-grey">
+        <span className="font-medium text-white md:ml-36 md:font-medium md:text-grey">
           Terms & Conditions
         </span>
         <span className=" text-grey">

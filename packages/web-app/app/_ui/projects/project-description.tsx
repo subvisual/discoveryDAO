@@ -29,7 +29,7 @@ export const ProjectDescription = () => {
       </p>
       <p>{data}</p>
       <div className="mb-9 mt-12 border-t border-grey" />
-      <h4 className="mb-8 font-semibold uppercase">Description</h4>
+      <h4 className="mb-8 font-medium uppercase">Description</h4>
       <p>
         Citizend brings top projects and contributors together to equitably
         catalyze growth in the Polkadot ecosystem. Get pitched by pre-screened

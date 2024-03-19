@@ -43,7 +43,7 @@ export const Grants = ({ serverInfo }: TGrantsProps) => {
 
   return (
     <div>
-      <h4 className="mt-6 font-semibold">Grants</h4>
+      <h4 className="mt-6 font-medium">Grants</h4>
       {grants?.map((grant) => (
         <div key={grant.dataId} className="flex flex-col gap-2 py-4">
           <p>
