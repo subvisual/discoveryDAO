@@ -19,9 +19,9 @@ export default function Project({ params }: TProjectProps) {
       <ProjectDescription />
       <div className="lg:pt-27">
         <TokenMetrics
-          token={'RDF'}
+          token="CTND"
           targetRaiseRange="2.M - 8M ETH"
-          totalSupply="800 000 000 RDF"
+          totalSupply="800 000 000 CTND"
           targetedDate={new Date('2024-04-29')}
           contractAddress="0x02323430947"
         />

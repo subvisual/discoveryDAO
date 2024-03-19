@@ -15,7 +15,7 @@ export const ProjectDescription = () => {
   if (isSSR || isLoading) return <p className="load">Loading...</p>;
 
   return (
-    <div className="max-w-2xl max-w-prose">
+    <div className="max-w-2xl max-w-prose text-white">
       <Image
         src="/citizend-logo-circle.svg"
         alt="Citizend Logo"
@@ -23,13 +23,13 @@ export const ProjectDescription = () => {
         height={80}
         priority
       />
-      <h3 className="mt-6">Citizend Community Sale</h3>
+      <h2 className="mt-6">Citizend Community Sale</h2>
       <p className="pt-2">
         A Polkadot-native token launch platform, by and for the community
       </p>
       <p>{data}</p>
-      <div className="mb-9 mt-12 border-t border-grey" />
-      <h4 className="mb-8 font-medium uppercase">Description</h4>
+      <div className="border-white-anti-flash mb-9 mt-12 border-t" />
+      <h3 className="mb-8">Description</h3>
       <p>
         Citizend brings top projects and contributors together to equitably
         catalyze growth in the Polkadot ecosystem. Get pitched by pre-screened
