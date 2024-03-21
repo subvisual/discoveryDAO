@@ -25,11 +25,6 @@ export default function Project({ params }: TProjectProps) {
           targetedDate={new Date('2024-04-29')}
           contractAddress="0x02323430947"
         />
-        <div className="mt-9">
-          <Suspense key={params.id} fallback={<div>Loading...</div>}>
-            <InfoWithServerDetails />
-          </Suspense>
-        </div>
       </div>
     </main>
   );

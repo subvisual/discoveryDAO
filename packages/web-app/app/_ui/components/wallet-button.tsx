@@ -2,8 +2,12 @@
 
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 import { Button } from '../components';
+import { useDialog } from '@/app/_providers/dialog/context';
+import { SettingsDialog } from './dialogs';
 
 export function WalletButton() {
+  const { open } = useDialog();
+
   return (
     <ConnectButton.Custom>
       {({
@@ -43,9 +47,15 @@ export function WalletButton() {
             );
           }
           return (
-            <Button type="button" variant="dropdown" onClick={openAccountModal}>
-              {account.displayName}
-            </Button>
+            <>
+              <Button
+                type="button"
+                variant="dropdown"
+                onClick={() => open(SettingsDialog.displayName)}
+              >
+                {account.displayName}
+              </Button>
+            </>
           );
         })();
       }}

@@ -25,11 +25,11 @@ export const IdOsProvider = ({ children }: PropsWithChildren) => {
     const _profile = await sdk.hasProfile(userAddress);
 
     if (!_profile) {
-      window.open(
-        getProviderUrl(ethSigner.address),
-        '_blank',
-        'noopener,noreferrer',
-      );
+      // window.open(
+      //   getProviderUrl(ethSigner.address),
+      //   '_blank',
+      //   'noopener,noreferrer',
+      // );
 
       return;
     }
@@ -86,11 +86,12 @@ export const IdOsProvider = ({ children }: PropsWithChildren) => {
 
   const state = useMemo(() => {
     return {
-      sdk: sdk,
+      sdk,
       hasProfile,
       address: userAddress,
       hasSigned,
       authenticate,
+      getProviderUrl,
       reset: async () => {
         await sdk?.reset({ enclave: true });
       },

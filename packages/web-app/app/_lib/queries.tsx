@@ -1,7 +1,9 @@
 import { useQuery } from '@tanstack/react-query';
 import { useIdOS } from '../_providers/idos';
 import { idOSCredential } from '../_types/idos';
-// import { idOS } from '@idos-network/idos-sdk';
+import { useMemo } from 'react';
+import { compareAddresses } from './utils';
+import { getPublicInfo } from '../_server/idos';
 
 export const useFetchIdOSProfile = () => {
   const { sdk } = useIdOS();
@@ -33,13 +35,13 @@ export const useFetchCredentials = () => {
   });
 };
 
-export const useFetchCredentialContent = (credentialId: string) => {
+export const useFetchCredentialContent = (credentialId: string | undefined) => {
   const { sdk } = useIdOS();
 
   return useQuery({
     queryKey: ['credential-content', credentialId],
     queryFn: async ({ queryKey: [, credentialId] }) => {
-      if (!sdk) return;
+      if (!sdk || !credentialId) return '';
 
       const credential = await sdk.data.get<
         idOSCredential & { content: string }
@@ -71,11 +73,101 @@ export const useFetchWallets = () => {
   });
 };
 
-export const useFetchGrants = (grantee: string) => {
+export const useFetchGrants = () => {
   const { sdk, address } = useIdOS();
 
   return useQuery({
-    queryKey: ['grants', address, grantee],
-    queryFn: () => sdk?.grants.list({ owner: address, grantee }),
+    queryKey: ['grants', address],
+    queryFn: async () => {
+      const { grantee } = await getPublicInfo();
+      return sdk?.grants.list({ owner: address, grantee });
+    },
   });
+};
+
+export const useFetchKycCredential = () => {
+  const { data: credentials, isLoading, error } = useFetchCredentials();
+
+  const credential = useMemo(() => {
+    if (!credentials) return;
+
+    return credentials.find((c) => c.credential_type === 'kyc');
+  }, [credentials]);
+
+  return {
+    credential,
+    id: credential?.id,
+    approved: credential?.credential_status === 'approved',
+    isLoading,
+    error,
+  };
+};
+
+type TCredentialContent = {
+  country: string | undefined;
+  wallet:
+    | {
+        address: string;
+        verified: boolean;
+      }
+    | undefined;
+  id: string | undefined;
+  approved: boolean | undefined;
+  isLoading: boolean;
+  error: any;
+};
+
+const emptyCredentialContent = {
+  country: undefined,
+  wallet: undefined,
+  id: undefined,
+  approved: undefined,
+  isLoading: false,
+  error: undefined,
+};
+
+export const useFetchKycData = () => {
+  const { address } = useIdOS();
+  const {
+    id,
+    approved,
+    isLoading: kycLoading,
+    error: kycError,
+  } = useFetchKycCredential();
+  const {
+    data: credentialContent,
+    isLoading: contentLoading,
+    error: contentError,
+  } = useFetchCredentialContent(id);
+
+  const credential: TCredentialContent = useMemo(() => {
+    if (!credentialContent) return emptyCredentialContent;
+
+    return {
+      id: id,
+      approved,
+      country:
+        credentialContent?.credentialSubject?.residential_address_country,
+      wallet: credentialContent?.credentialSubject?.wallets.find((wallet) => {
+        return (
+          address &&
+          compareAddresses(wallet?.address, address) &&
+          wallet?.verified
+        );
+      }),
+      isLoading: kycLoading || contentLoading,
+      error: kycError || contentError,
+    };
+  }, [
+    credentialContent,
+    address,
+    id,
+    approved,
+    kycLoading,
+    contentLoading,
+    kycError,
+    contentError,
+  ]);
+
+  return credential;
 };

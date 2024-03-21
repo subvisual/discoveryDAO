@@ -8,7 +8,7 @@ import {
   useFetchWallets,
 } from '@/app/_lib/queries';
 import { PublicInfo } from '@/app/_server/types';
-import { AcquireAccessGrantButton } from './acquire-access-grant-button';
+import { AcquireAccessGrantButton } from '../components/dialogs/acquire-access-grant-button';
 import { Grants } from './grants';
 
 const json = (object) => {
@@ -63,9 +63,7 @@ export const IdosInfo = ({ serverInfo }: TIdosInfoProps) => {
           </p>
         </div>
       ))}
-      {credentialId ? (
-        <AcquireAccessGrantButton id={credentialId} serverInfo={serverInfo} />
-      ) : null}
+      {credentialId ? <AcquireAccessGrantButton id={credentialId} /> : null}
       {credentialContent ? (
         <pre className="mt-5 flex overflow-auto bg-slate-400">
           ${json(credentialContent)}

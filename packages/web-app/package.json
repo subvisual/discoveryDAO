@@ -13,6 +13,7 @@
     "start": "next start"
   },
   "dependencies": {
+    "@headlessui/react": "^1.7.18",
     "@idos-network/idos-sdk": "../idos-sdk-js/packages/idos-sdk-js",
     "@rainbow-me/rainbowkit": "^2.0.1",
     "@rainbow-me/rainbowkit-siwe-next-auth": "^0.4.0",

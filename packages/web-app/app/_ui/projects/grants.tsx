@@ -37,7 +37,7 @@ const DecryptButton = ({ dataId }: { dataId: string }) => {
 };
 
 export const Grants = ({ serverInfo }: TGrantsProps) => {
-  const { data: grants } = useFetchGrants(serverInfo.grantee);
+  const { data: grants } = useFetchGrants();
 
   if (!grants?.length) return null;
 

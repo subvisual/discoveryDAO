@@ -24,8 +24,12 @@ h3 {
   @apply font-medium;
   @apply text-base;
   @apply uppercase;
-    @apply text-white;
+  @apply text-white;
+}
 
+h4 {
+  @apply font-medium;
+  @apply text-base;
 }
 
 input[type='number'] {

@@ -1,4 +1,5 @@
 import { Button } from '../components';
+import { ContributeButton } from './contribute-button';
 
 type TTokenMetricsProps = {
   token: string;
@@ -22,7 +23,7 @@ export const TokenMetrics = ({
   }).format(targetedDate);
 
   return (
-    <div className="bg-white-anti-flash flex w-full flex-col rounded-lg">
+    <div className="flex w-full flex-col rounded-lg bg-white-anti-flash">
       <h4 className="border-b border-grey-lightest p-6 font-medium uppercase">
         Token Metrics
       </h4>
@@ -38,7 +39,7 @@ export const TokenMetrics = ({
         <span>Contract Address:</span>
         <span className="font-medium">{contractAddress}</span>
       </div>
-      <Button className="rounded-none rounded-b-lg">Contribute</Button>
+      <ContributeButton />
     </div>
   );
 };
