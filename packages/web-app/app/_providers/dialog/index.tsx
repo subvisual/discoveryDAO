@@ -1,6 +1,6 @@
 import { useMemo, useState, PropsWithChildren } from 'react';
 import { DialogContext } from './context';
-import { DialogWrapper } from '@/app/_ui/components/dialogs/modal-wrapper';
+import { DialogWrapper } from '@/app/_ui/components/dialogs/dialog-wrapper';
 import { ContributeDialog, SettingsDialog } from '@/app/_ui/components/dialogs';
 
 type TDialogComponent = {
