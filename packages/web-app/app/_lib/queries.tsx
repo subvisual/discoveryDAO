@@ -117,15 +117,6 @@ type TCredentialContent = {
   error: any;
 };
 
-const emptyCredentialContent = {
-  country: undefined,
-  wallet: undefined,
-  id: undefined,
-  approved: undefined,
-  isLoading: false,
-  error: undefined,
-};
-
 export const useFetchKycData = () => {
   const { address } = useIdOS();
   const {
@@ -141,8 +132,6 @@ export const useFetchKycData = () => {
   } = useFetchCredentialContent(id);
 
   const credential: TCredentialContent = useMemo(() => {
-    if (!credentialContent) return emptyCredentialContent;
-
     return {
       id: id,
       approved,

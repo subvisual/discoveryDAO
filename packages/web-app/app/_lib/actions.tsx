@@ -1,6 +1,5 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useIdOS } from '../_providers/idos';
-import { PublicInfo } from '../_server/types';
 import { getPublicInfo } from '../_server/idos';
 
 export const useAcquireAccessGrantMutation = () => {

@@ -142,19 +142,32 @@ const IssueAccessGrant = ({ id, close }: TIssueAccessGrantProps) => {
   );
 };
 
+const UnlockIdosExternal = ({ close }: TCloseProp) => {
+  return (
+    <div>
+      <div className="mt-3 text-center sm:mt-5">
+        <Dialog.Title as="h2" className="text-gray-900">
+          Verify your ID
+        </Dialog.Title>
+        <Button variant="secondary" onClick={close}>
+          Unlock idOs on main page
+        </Button>
+      </div>
+    </div>
+  );
+};
+
 const UnlockedIdos = () => {
-  const { country, id, approved } = useFetchKycData();
+  const { close } = useDialog();
+
+  const { country, id, approved, isLoading } = useFetchKycData();
   const { data: grants } = useFetchGrants();
+
+  if (isLoading) return <UnlockIdosExternal close={close} />;
 
   if (!approved) return <PendingApproval close={close} />;
 
   if (country !== 'PT') return <BlockedCountry close={close} />;
-
-  console.log(
-    '%c==>',
-    'color: green; background: yellow; font-size: 20px',
-    grants,
-  );
 
   if (id && grants && grants.length < 6)
     return <IssueAccessGrant id={id} close={close} />;
@@ -175,7 +188,7 @@ const UnlockedIdos = () => {
 
 export const ContributeDialog = () => {
   const { close } = useDialog();
-  const { hasSigned, address, hasProfile, authenticate } = useIdOS();
+  const { hasSigned, address, hasProfile, authenticate, sdk } = useIdOS();
 
   if (!address)
     return (

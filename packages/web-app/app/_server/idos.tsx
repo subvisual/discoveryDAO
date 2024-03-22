@@ -111,7 +111,7 @@ export const getAccessGrantsContentDecrypted = async (dataId: string) => {
 
     return { content: decryptedContent };
   } catch (error) {
-    return { content: 'caput', errors: error?.message };
+    return { content: 'error', errors: error?.message };
   }
 };
 

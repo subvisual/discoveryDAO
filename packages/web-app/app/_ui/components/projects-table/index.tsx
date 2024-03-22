@@ -10,7 +10,7 @@ import { useEffect, useState } from 'react';
 import { columns } from './column-definitions';
 import { Project } from '@/app/_types';
 import { formatDate } from './format-date';
-import { upcomingMobile } from './column-visibility';
+import { upcomingDesktop, upcomingMobile } from './column-visibility';
 
 const defaultData: Project[] = [
   {
@@ -19,7 +19,7 @@ const defaultData: Project[] = [
     targetedRaise: 100,
     supplySold: 50,
     urlId: 'citizend',
-    startDate: new Date(),
+    startDate: new Date('2024-04-24'),
     endDate: new Date(),
   },
   {
@@ -27,7 +27,7 @@ const defaultData: Project[] = [
     project: 'Project 2',
     targetedRaise: 200,
     supplySold: 100,
-    startDate: new Date(),
+    startDate: new Date('2024-04-24'),
     endDate: new Date(),
   },
   {
@@ -35,7 +35,7 @@ const defaultData: Project[] = [
     project: 'Project 3',
     targetedRaise: 300,
     supplySold: 150,
-    startDate: new Date(),
+    startDate: new Date('2024-04-24'),
     endDate: new Date(),
   },
 ];
@@ -46,10 +46,13 @@ const DesktopTable = () => {
     columns,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
+    state: {
+      columnVisibility: upcomingDesktop,
+    },
   });
 
   return (
-    <table className="bg-white-anti-flash hidden w-full rounded-md border-grey-lightest md:table">
+    <table className="hidden w-full rounded-md border-grey-lightest bg-white-anti-flash md:table">
       <thead>
         {table.getHeaderGroups()?.map((headerGroup) => (
           <tr key={headerGroup.id}>
@@ -70,11 +73,11 @@ const DesktopTable = () => {
         ))}
       </thead>
       {table.getRowCount() ? (
-        <tbody>
+        <tbody className="border-t border-grey-light">
           {table.getRowModel().rows.map((row) => (
-            <tr key={row.id} className="hover:bg-grey-lightest">
+            <tr key={row.id} className="hover:bg-grey-light">
               {row.getVisibleCells().map((cell) => (
-                <td key={cell.id} className="border-t border-grey-lightest p-6">
+                <td key={cell.id} className="p-6">
                   {flexRender(cell.column.columnDef.cell, cell.getContext())}
                 </td>
               ))}
@@ -98,14 +101,14 @@ const MobileTable = () => {
   });
 
   return (
-    <table className="bg-white-anti-flash w-full overflow-hidden rounded-md border-grey-lightest md:hidden">
+    <table className="w-full overflow-hidden rounded-md border-grey-lightest bg-white-anti-flash md:hidden">
       <thead>
         {table.getHeaderGroups()?.map((headerGroup) => (
-          <tr key={headerGroup.id}>
+          <tr key={`${headerGroup.id}-mobile`}>
             {headerGroup.headers.map((header) => {
               return (
                 <td
-                  key={header.id}
+                  key={`${header.id}-mobile`}
                   className="p-4 text-xs font-medium uppercase leading-4 text-font-color-light"
                 >
                   {flexRender(
@@ -122,20 +125,22 @@ const MobileTable = () => {
         <tbody>
           {table.getRowModel().rows.map((row) => (
             <>
-              <tr key={row.id} className="hover:bg-grey-lightest">
+              <tr
+                key={`${row.id}-row-mobile`}
+                className="hover:bg-grey-lightest"
+              >
                 {row.getVisibleCells().map((cell) => (
                   <td
-                    key={cell.id}
+                    key={`${cell.id}-cell-mobile`}
                     className="border-t border-grey-lightest p-6"
                   >
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
                   </td>
                 ))}
               </tr>
-              <tr key={`${row.id}-bottom`}>
+              <tr key={`${row.id}-row-mobile-bottom`}>
                 <td
                   className="bg-slate-200 px-6 py-3"
-                  key={`${row.id}-inner`}
                   colSpan={row.getVisibleCells().length}
                 >
                   Starts: {formatDate(row.original.startDate)}
@@ -148,6 +153,24 @@ const MobileTable = () => {
     </table>
   );
 };
+
+// const useWindowWidth = () => {
+//   const [windowWidth, setWindowWidth] = useState(0);
+
+//   useEffect(() => {
+//     const updateWidth = () => {
+//       setWindowWidth(window.innerWidth);
+//     };
+
+//     window.addEventListener('resize', updateWidth);
+
+//     updateWidth();
+
+//     return () => window.removeEventListener('resize', updateWidth);
+//   }, []);
+
+//   return windowWidth;
+// };
 
 export function ProjectsTable() {
   //   const [projects, setProjects] = useState<any[] | null>(null);

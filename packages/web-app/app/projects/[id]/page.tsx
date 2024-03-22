@@ -1,7 +1,7 @@
-import { InfoWithServerDetails } from '@/app/_ui/projects/info-with-server-details';
+// import { InfoWithServerDetails } from '@/app/_ui/projects/info-with-server-details';
 import { ProjectDescription } from '@/app/_ui/projects/project-description';
 import { TokenMetrics } from '@/app/_ui/projects/token-metrics';
-import { Suspense } from 'react';
+// import { Suspense } from 'react';
 
 type TProjectProps = {
   params: {
@@ -15,7 +15,7 @@ export default function Project({ params }: TProjectProps) {
   }
 
   return (
-    <main className="grid grid-cols-1 gap-x-17 gap-y-9 px-31 lg:grid-cols-2">
+    <main className="grid grid-cols-1 gap-x-17 gap-y-9 lg:grid-cols-2">
       <ProjectDescription />
       <div className="lg:pt-27">
         <TokenMetrics
@@ -25,6 +25,11 @@ export default function Project({ params }: TProjectProps) {
           targetedDate={new Date('2024-04-29')}
           contractAddress="0x02323430947"
         />
+        {/* <div className="mt-9">
+          <Suspense key={params.id} fallback={<div>Loading...</div>}>
+            <InfoWithServerDetails />
+          </Suspense>
+        </div> */}
       </div>
     </main>
   );
