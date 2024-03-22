@@ -27,7 +27,7 @@ export const columns = [
     cell: (info) => info.renderValue(),
   }),
   columnHelper.accessor('endDate', {
-    header: () => 'Sale Starts in',
+    header: () => 'Sale Ends in',
     cell: (info) => <span>{formatDate(info.getValue())}</span>,
   }),
   columnHelper.accessor('supplySold', {

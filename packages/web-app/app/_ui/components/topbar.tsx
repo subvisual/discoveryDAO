@@ -31,31 +31,33 @@ export function Topbar() {
   return (
     <header
       className={clsx(
-        'sticky top-0 flex flex-row justify-between px-6 py-5 transition-all duration-100 md:justify-normal md:px-28 md:py-6',
+        'sticky top-0 transition-all duration-100',
         scrollPosition > 40 && 'bg-navy-dark',
       )}
     >
-      <Image
-        src="/citizend-logo.svg"
-        alt="Citizend Logo"
-        width={157}
-        height={52}
-        priority
-        className="hidden md:block"
-      />
-      <Image
-        src="/citizend-logo.svg"
-        alt="Citizend Logo"
-        width={96}
-        height={31}
-        priority
-        className="md:hidden"
-      />
-      <nav className="ml-20 hidden flex-grow items-center gap-8 md:flex">
-        <NavLink href="/" name="All Projects" className="" />
-        <NavLink href="/projects/my-projects" name="My Projects" />
-      </nav>
-      <WalletButton />
+      <div className="mx-auto flex max-w-6xl flex-row justify-between px-6 py-5 md:justify-normal md:py-6">
+        <Image
+          src="/citizend-logo.svg"
+          alt="Citizend Logo"
+          width={157}
+          height={52}
+          priority
+          className="hidden md:block"
+        />
+        <Image
+          src="/citizend-logo.svg"
+          alt="Citizend Logo"
+          width={96}
+          height={31}
+          priority
+          className="md:hidden"
+        />
+        <nav className="ml-20 hidden flex-grow items-center gap-8 md:flex">
+          <NavLink href="/" name="All Projects" className="" />
+          <NavLink href="/projects/my-projects" name="My Projects" />
+        </nav>
+        <WalletButton />
+      </div>
     </header>
   );
 }

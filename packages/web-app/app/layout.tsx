@@ -43,7 +43,7 @@ export default function RootLayout({
             <Topbar />
             <div className="grow bg-cover py-14 md:p-20">
               <div id="idos"></div>
-              <div className="mx-auto max-w-7xl">{children}</div>
+              <div className="mx-auto max-w-6xl px-6">{children}</div>
             </div>
             <Footer />
           </div>

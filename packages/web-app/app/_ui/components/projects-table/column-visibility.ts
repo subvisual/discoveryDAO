@@ -20,7 +20,7 @@ export const upcomingDesktop = {
   id: false,
   project: true,
   targetedRaise: true,
-  endDate: true,
+  endDate: false,
   startDate: true,
   supplySold: false,
 };

@@ -1,7 +1,14 @@
 export const formatDate = (date: Date) => {
   return new Intl.DateTimeFormat('en-US', {
-    month: 'long',
+    month: 'numeric',
     day: 'numeric',
     year: 'numeric',
-  }).format(date);
+    hour: 'numeric',
+    minute: 'numeric',
+    hour12: false,
+    timeZoneName: 'short',
+  })
+    .format(date)
+    .split(',')
+    .join(' -');
 };

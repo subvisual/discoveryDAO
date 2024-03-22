@@ -156,7 +156,7 @@ const UnlockedIdos = () => {
     grants,
   );
 
-  if (id && grants && grants.length < 5)
+  if (id && grants && grants.length < 6)
     return <IssueAccessGrant id={id} close={close} />;
 
   return (
