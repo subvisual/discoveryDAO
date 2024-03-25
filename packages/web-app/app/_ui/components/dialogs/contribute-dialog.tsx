@@ -169,7 +169,7 @@ const UnlockedIdos = () => {
 
   if (country !== 'PT') return <BlockedCountry close={close} />;
 
-  if (id && grants && grants.length < 6)
+  if (id && grants && grants.length < 10)
     return <IssueAccessGrant id={id} close={close} />;
 
   return (
@@ -199,10 +199,6 @@ export const ContributeDialog = () => {
 
   if (!hasProfile) {
     return <VerifyYourId address={address} close={close} />;
-  }
-
-  if (!hasSigned) {
-    return <UnlockIdos authenticate={authenticate} close={close} />;
   }
 
   return <UnlockedIdos />;

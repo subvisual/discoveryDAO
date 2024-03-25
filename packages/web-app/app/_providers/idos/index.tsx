@@ -58,6 +58,14 @@ export const IdOsProvider = ({ children }: PropsWithChildren) => {
 
       const profile = await sdk.hasProfile(userAddress);
 
+      // Authenticate
+      if (profile) {
+        setHasProfile(true);
+        await sdk.setSigner('EVM', ethSigner);
+        setHasSigned(true);
+        return;
+      }
+
       setHasProfile(profile);
     };
 
