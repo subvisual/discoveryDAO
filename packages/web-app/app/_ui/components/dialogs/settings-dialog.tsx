@@ -3,7 +3,7 @@
 import { Dialog } from '@headlessui/react';
 import { Button } from '..';
 import { useDialog } from '@/app/_providers/dialog/context';
-import { useAccount, useBalance } from 'wagmi';
+import { useAccount, useBalance, useDisconnect } from 'wagmi';
 import { formatEther } from 'viem';
 import { useIdOS } from '@/app/_providers/idos';
 import Link from 'next/link';
@@ -76,6 +76,7 @@ export function SettingsDialog() {
     address: address,
     blockTag: 'latest',
   });
+  const { disconnect } = useDisconnect();
 
   return (
     <>
@@ -95,6 +96,14 @@ export function SettingsDialog() {
         </p>
         <Status />
       </div>
+      <Button
+        onClick={() => {
+          disconnect();
+          close();
+        }}
+      >
+        Disconnect
+      </Button>
       {/* <div>
         <div className="mt-3 text-center sm:mt-5">
           <Dialog.Title as="h3" className="text-gray-900">
