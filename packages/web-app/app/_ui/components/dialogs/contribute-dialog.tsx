@@ -115,17 +115,6 @@ const IssueAccessGrant = ({ id, close }: TIssueAccessGrantProps) => {
 };
 
 const UnlockIdosExternal = ({ close }: TCloseProp) => {
-  useEffect(() => {
-    const x =
-      document.getElementById('idos')?.getAttribute('class') === 'visible';
-
-    console.log(
-      '%c==>',
-      'color: green; background: yellow; font-size: 20px',
-      x,
-    );
-  }, []);
-
   return (
     <div>
       <div className="mt-3 text-center sm:mt-5">

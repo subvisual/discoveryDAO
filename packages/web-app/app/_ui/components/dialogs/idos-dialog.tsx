@@ -2,9 +2,10 @@
 
 import { Dialog } from '@headlessui/react';
 import { Button } from '..';
+import { useDialog } from '@/app/_providers/dialog/context';
 
 export function IdosDialog() {
-  // const { close } = useDialog();
+  const { close } = useDialog();
 
   return (
     <>
