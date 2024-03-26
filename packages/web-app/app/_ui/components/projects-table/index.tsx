@@ -154,24 +154,6 @@ const MobileTable = () => {
   );
 };
 
-// const useWindowWidth = () => {
-//   const [windowWidth, setWindowWidth] = useState(0);
-
-//   useEffect(() => {
-//     const updateWidth = () => {
-//       setWindowWidth(window.innerWidth);
-//     };
-
-//     window.addEventListener('resize', updateWidth);
-
-//     updateWidth();
-
-//     return () => window.removeEventListener('resize', updateWidth);
-//   }, []);
-
-//   return windowWidth;
-// };
-
 export function ProjectsTable() {
   //   const [projects, setProjects] = useState<any[] | null>(null);
 

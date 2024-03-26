@@ -6,6 +6,7 @@ import { WalletButton } from '@/app/_ui/components';
 import { NavLink } from './nav-link';
 import { useEffect, useState } from 'react';
 import clsx from 'clsx';
+import { Dropdown } from './dropdown';
 
 export const useScrollPosition = () => {
   const [scrollPosition, setScrollPosition] = useState(0);
@@ -53,10 +54,14 @@ export function Topbar() {
           className="md:hidden"
         />
         <nav className="ml-20 hidden flex-grow items-center gap-8 md:flex">
-          <NavLink href="/" name="All Projects" className="" />
+          <NavLink href="/" name="All Projects" />
           <NavLink href="/projects/my-projects" name="My Projects" />
         </nav>
         <WalletButton />
+        <Dropdown classNames="md:hidden">
+          <Dropdown.Item href="/" name="All Projects" />
+          <Dropdown.Item href="/projects/my-projects" name="My Projects" />
+        </Dropdown>
       </div>
     </header>
   );
