@@ -12,10 +12,9 @@ import nacl from 'tweetnacl';
 import { Grant, KwilSigner, PublicInfo } from './types';
 
 const ENCRYPTION_SECRET_KEY = Base64Codec.decode(
-  '2bu7SyMToRAuFn01/oqU3fx9ZHo9GKugQhQYmDuBXzg=',
+  process.env.NEXT_ENCRYPTION_SECRET_KEY,
 );
-const EVM_GRANTEE_PRIVATE_KEY =
-  '0x515c2fed89c22eaa9d41cfce6e6e454fa0a39353e711d6a99f34b4ecab4b4859';
+const EVM_GRANTEE_PRIVATE_KEY = process.env.NEXT_EVM_GRANTEE_PRIVATE_KEY;
 
 const ENCRYPTION_KEY_PAIR = nacl.box.keyPair.fromSecretKey(
   ENCRYPTION_SECRET_KEY,

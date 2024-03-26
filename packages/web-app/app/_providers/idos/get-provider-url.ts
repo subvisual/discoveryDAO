@@ -1,4 +1,4 @@
-const providerBaseUrl = process.env.NEXT_PUBLIC_PROFILE_PROVIDER_TEST_BASE;
+const providerBaseUrl = process.env.NEXT_PUBLIC_PROFILE_PROVIDER_BASE;
 const providerIdosCheck =
   '%20verification.idos%3Aread%20verification.idos.details%3Aread';
 const providerLivenessCheck =
