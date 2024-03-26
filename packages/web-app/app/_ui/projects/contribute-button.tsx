@@ -4,10 +4,9 @@ import { useIdOS } from '@/app/_providers/idos';
 import { Button } from '../components';
 import { ContributeDialog } from '../components/dialogs';
 import { useDialog } from '@/app/_providers/dialog/context';
-import Link from 'next/link';
 
 export const ContributeButton = () => {
-  const { hasProfile, getProviderUrl, address } = useIdOS();
+  const { address } = useIdOS();
   const { open } = useDialog();
 
   if (!address)

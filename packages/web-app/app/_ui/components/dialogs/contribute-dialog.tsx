@@ -122,7 +122,7 @@ const UnlockIdosExternal = ({ close }: TCloseProp) => {
           Verify your ID
         </Dialog.Title>
         <Button variant="secondary" onClick={close}>
-          Unlock idOs on main page
+          {`Unlock idOs on your wallet's modal`}
         </Button>
       </div>
     </div>
@@ -160,7 +160,7 @@ const UnlockedIdos = () => {
 
 export const ContributeDialog = () => {
   const { close } = useDialog();
-  const { address, hasProfile, sdk } = useIdOS();
+  const { address, hasProfile } = useIdOS();
 
   if (!address)
     return (
