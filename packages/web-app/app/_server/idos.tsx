@@ -49,7 +49,7 @@ const decrypt = async (
     ENCRYPTION_KEY_PAIR.secretKey,
   );
 
-  if (decrypted == null) {
+  if (!decrypted) {
     throw Error(
       `Couldn't decrypt. ${JSON.stringify(
         {
