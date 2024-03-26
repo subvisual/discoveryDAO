@@ -8,6 +8,7 @@ import { getProviderUrl } from '@/app/_providers/idos/get-provider-url';
 import Link from 'next/link';
 import { Button } from '..';
 import { useDialog } from '@/app/_providers/dialog/context';
+import { useEffect } from 'react';
 
 type TVerifyYourIdProps = {
   address: string;
@@ -30,35 +31,6 @@ const VerifyYourId = ({ address, close }: TVerifyYourIdProps) => {
         <Link href={getProviderUrl(address)} className="mt-8">
           Verify my ID on IdOs to contribute
         </Link>
-        <Button variant="secondary" onClick={close}>
-          Skip for now
-        </Button>
-      </div>
-    </div>
-  );
-};
-
-type TUnlockIdosProps = {
-  authenticate: () => void;
-  close: () => void;
-};
-
-const UnlockIdos = ({ authenticate, close }: TUnlockIdosProps) => {
-  return (
-    <div>
-      <div className="mt-3 text-center sm:mt-5">
-        <Dialog.Title as="h2" className="text-gray-900">
-          Verify your ID
-        </Dialog.Title>
-        <div className="mt-2">
-          <p className="text-sm text-gray-500">
-            To be able to Contribute to this project, you must complete ID basic
-            verification.
-          </p>
-        </div>
-        <Button className="mt-8" onClick={authenticate}>
-          Unlock idOS verification
-        </Button>
         <Button variant="secondary" onClick={close}>
           Skip for now
         </Button>
@@ -143,6 +115,17 @@ const IssueAccessGrant = ({ id, close }: TIssueAccessGrantProps) => {
 };
 
 const UnlockIdosExternal = ({ close }: TCloseProp) => {
+  useEffect(() => {
+    const x =
+      document.getElementById('idos')?.getAttribute('class') === 'visible';
+
+    console.log(
+      '%c==>',
+      'color: green; background: yellow; font-size: 20px',
+      x,
+    );
+  }, []);
+
   return (
     <div>
       <div className="mt-3 text-center sm:mt-5">
@@ -188,7 +171,7 @@ const UnlockedIdos = () => {
 
 export const ContributeDialog = () => {
   const { close } = useDialog();
-  const { hasSigned, address, hasProfile, authenticate, sdk } = useIdOS();
+  const { address, hasProfile, sdk } = useIdOS();
 
   if (!address)
     return (

@@ -7,8 +7,7 @@ import { useDialog } from '@/app/_providers/dialog/context';
 import Link from 'next/link';
 
 export const ContributeButton = () => {
-  const { hasProfile, hasSigned, getProviderUrl, address, authenticate } =
-    useIdOS();
+  const { hasProfile, getProviderUrl, address } = useIdOS();
   const { open } = useDialog();
 
   if (!address)

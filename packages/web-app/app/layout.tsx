@@ -42,7 +42,7 @@ export default function RootLayout({
           <div className="flex min-h-screen flex-col bg-background-pattern-overlay bg-cover bg-no-repeat antialiased">
             <Topbar />
             <div className="grow bg-cover py-14 md:p-20">
-              <div id="idos"></div>
+              <div id="idos" class="potato"></div>
               <div className="mx-auto max-w-6xl px-6">{children}</div>
             </div>
             <Footer />

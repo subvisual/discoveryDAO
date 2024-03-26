@@ -49,21 +49,12 @@ const Credentials = () => {
 };
 
 const Status = () => {
-  const { hasProfile, hasSigned, getProviderUrl, address, authenticate } =
-    useIdOS();
+  const { hasProfile, getProviderUrl, address } = useIdOS();
 
   if (!address) return;
 
   if (!hasProfile) {
     return <Link href={getProviderUrl(address)}>Verify my ID</Link>;
-  }
-
-  if (!hasSigned) {
-    return (
-      <Button variant="secondary" onClick={authenticate}>
-        Read IdOs credentials & wallets
-      </Button>
-    );
   }
 
   return <Credentials />;

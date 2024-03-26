@@ -10,17 +10,13 @@ type TInfoProps = {
 };
 
 export function Info({ serverInfo }: TInfoProps) {
-  const { hasSigned, authenticate, address } = useIdOS();
+  const { address, hasProfile } = useIdOS();
 
-  if (!address) return null;
+  if (!hasProfile) return null;
 
   return (
     <div className="grid grid-cols-1 gap-2">
-      {hasSigned ? (
-        <IdosInfo serverInfo={serverInfo} />
-      ) : (
-        <Button onClick={authenticate}>Check KYC status</Button>
-      )}
+      <IdosInfo serverInfo={serverInfo} />
     </div>
   );
 }

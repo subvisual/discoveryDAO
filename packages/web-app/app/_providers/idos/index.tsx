@@ -14,31 +14,9 @@ import { getProviderUrl } from './get-provider-url';
 
 export const IdOsProvider = ({ children }: PropsWithChildren) => {
   const [hasProfile, setHasProfile] = useState(false);
-  const [hasSigned, setHasSigned] = useState(false);
   const [sdk, setSdk] = useState<idOS | null>(null);
   const ethSigner = useEthersSigner();
   const { address: userAddress, isConnected } = useAccount();
-
-  const authenticate = useCallback(async () => {
-    if (!ethSigner || !sdk || !userAddress) return;
-
-    const _profile = await sdk.hasProfile(userAddress);
-
-    if (!_profile) {
-      // window.open(
-      //   getProviderUrl(ethSigner.address),
-      //   '_blank',
-      //   'noopener,noreferrer',
-      // );
-
-      return;
-    }
-
-    await sdk.setSigner('EVM', ethSigner);
-
-    setHasProfile(true);
-    setHasSigned(true);
-  }, [ethSigner, sdk, userAddress]);
 
   // Load SDK once wallet is connected
   useEffect(() => {
@@ -57,16 +35,13 @@ export const IdOsProvider = ({ children }: PropsWithChildren) => {
       if (!ethSigner || !userAddress || !sdk) return;
 
       const profile = await sdk.hasProfile(userAddress);
+      setHasProfile(profile);
 
-      // Authenticate
+      // Authenticate by signing a message
       if (profile) {
-        setHasProfile(true);
         await sdk.setSigner('EVM', ethSigner);
-        setHasSigned(true);
         return;
       }
-
-      setHasProfile(profile);
     };
 
     initialize();
@@ -75,7 +50,6 @@ export const IdOsProvider = ({ children }: PropsWithChildren) => {
   const handleDisconnect = useCallback(async () => {
     await sdk?.reset({ enclave: true });
     setHasProfile(false);
-    setHasSigned(false);
     // setSdk(null);
   }, [sdk]);
 
@@ -97,14 +71,12 @@ export const IdOsProvider = ({ children }: PropsWithChildren) => {
       sdk,
       hasProfile,
       address: userAddress,
-      hasSigned,
-      authenticate,
       getProviderUrl,
       reset: async () => {
         await sdk?.reset({ enclave: true });
       },
     };
-  }, [sdk, hasProfile, hasSigned, userAddress, authenticate]);
+  }, [sdk, hasProfile, userAddress]);
 
   return <IdOSContext.Provider value={state}>{children}</IdOSContext.Provider>;
 };
