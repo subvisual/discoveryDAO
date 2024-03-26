@@ -110,7 +110,7 @@ export const getAccessGrantsContentDecrypted = async (dataId: string) => {
     );
 
     return { content: decryptedContent };
-  } catch (error) {
+  } catch (error: any) {
     return { content: 'error', errors: error?.message };
   }
 };

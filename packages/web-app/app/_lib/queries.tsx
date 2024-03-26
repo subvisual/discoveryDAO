@@ -117,6 +117,11 @@ type TCredentialContent = {
   error: any;
 };
 
+type TWallet = {
+  address: string;
+  verified: boolean;
+};
+
 export const useFetchKycData = () => {
   const { address } = useIdOS();
   const {
@@ -137,13 +142,15 @@ export const useFetchKycData = () => {
       approved,
       country:
         credentialContent?.credentialSubject?.residential_address_country,
-      wallet: credentialContent?.credentialSubject?.wallets.find((wallet) => {
-        return (
-          address &&
-          compareAddresses(wallet?.address, address) &&
-          wallet?.verified
-        );
-      }),
+      wallet: credentialContent?.credentialSubject?.wallets.find(
+        (wallet: TWallet) => {
+          return (
+            address &&
+            compareAddresses(wallet.address, address) &&
+            wallet.verified
+          );
+        },
+      ),
       isLoading: kycLoading || contentLoading,
       error: kycError || contentError,
     };

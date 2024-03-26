@@ -10,10 +10,18 @@ type TGrantsProps = {
   serverInfo: PublicInfo;
 };
 
-const json = (object) => {
-  return JSON.stringify(object, '', 2).replace(/"(data:.*?;).*/g, '$1 (...)');
+type TJson = {
+  [key: string]: any;
 };
 
+const json = (object: TJson) => {
+  return JSON.stringify(object, () => '', 2).replace(
+    /"(data:.*?;).*/g,
+    '$1 (...)',
+  );
+};
+
+// TEST COMPONENT - NOT FINAL, JUST TO DECRYPT THE GRANTS
 const DecryptButton = ({ dataId }: { dataId: string }) => {
   const initialState: { content: string; errors: any } = {
     content: '',

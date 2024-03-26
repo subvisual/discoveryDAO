@@ -4,7 +4,12 @@ import { ConnectButton } from '@rainbow-me/rainbowkit';
 import { useDialog } from '@/app/_providers/dialog/context';
 import { SettingsDialog } from './dialogs';
 
-const Button = ({ children, onClick, variant }) => {
+type TButtonProps = {
+  children: React.ReactNode;
+  onClick: () => void;
+};
+
+const Button = ({ children, onClick }: TButtonProps) => {
   return (
     <button
       onClick={onClick}
@@ -59,38 +64,19 @@ export function WalletButton() {
         const connected = mounted && account && chain;
 
         if (!mounted)
-          return (
-            <Button disabled variant="primary-disabled">
-              Connect Wallet
-            </Button>
-          );
+          // TODO: Disabled
+          return <Button onClick={() => {}}>Connect Wallet</Button>;
 
         return (() => {
           if (!connected) {
-            return (
-              <Button
-                type="button"
-                variant="primary"
-                onClick={openConnectModal}
-              >
-                Connect Wallet
-              </Button>
-            );
+            return <Button onClick={openConnectModal}>Connect Wallet</Button>;
           }
           if (chain.unsupported) {
-            return (
-              <Button type="button" variant="dropdown" onClick={openChainModal}>
-                Wrong network
-              </Button>
-            );
+            return <Button onClick={openChainModal}>Wrong network</Button>;
           }
           return (
             <>
-              <Button
-                type="button"
-                variant="dropdown"
-                onClick={() => open(SettingsDialog.displayName)}
-              >
+              <Button onClick={() => open(SettingsDialog.displayName)}>
                 {account.displayName}
               </Button>
             </>

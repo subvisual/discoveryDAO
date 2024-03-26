@@ -6,7 +6,7 @@
     "build": "next build",
     "bundle": "rm -rf ${OUT_DIR:-dist} .next && yarn build && next export -o ${OUT_DIR:-dist}",
     "dev": "next dev",
-    "lint": "yarn lint:next && yarn lint:tsc && yarn lint:prettier",
+    "lint": "yarn lint:next && yarn lint:tsc && yarn prettier",
     "lint:next": "next lint",
     "lint:tsc": "tsc --noEmit",
     "precommit": "lint-staged",
@@ -15,10 +15,10 @@
     "start": "next start"
   },
   "lint-staged": {
-    "*.@(ts|tsx)": [
-      "tsc --pretty --noEmit"
+    "!(*node_modules|.next)/**/*.@(ts|tsx)": [
+      "bash -c tsc --noEmit"
     ],
-    "*.@(ts|tsx|js)": [
+    "!(*node_modules|.next)/**/*.@(ts|tsx|js)": [
       "prettier --write --ignore-unknown",
       "eslint"
     ],

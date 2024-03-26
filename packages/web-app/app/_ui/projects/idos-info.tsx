@@ -5,42 +5,35 @@ import { useState } from 'react';
 import {
   useFetchCredentialContent,
   useFetchCredentials,
-  useFetchWallets,
 } from '@/app/_lib/queries';
 import { PublicInfo } from '@/app/_server/types';
 import { AcquireAccessGrantButton } from '../components/dialogs/acquire-access-grant-button';
 import { Grants } from './grants';
 
-const json = (object) => {
-  return JSON.stringify(object, '', 2).replace(/"(data:.*?;).*/g, '$1 (...)');
+type TJson = {
+  [key: string]: any;
+};
+
+const json = (object: TJson) => {
+  return JSON.stringify(object, () => '', 2).replace(
+    /"(data:.*?;).*/g,
+    '$1 (...)',
+  );
 };
 
 type TIdosInfoProps = {
   serverInfo: PublicInfo;
 };
 
+// TEST COMPONENT - NOT FINAL, JUST TO OUTPUT INFO IN THE PAGE
 export const IdosInfo = ({ serverInfo }: TIdosInfoProps) => {
   const [credentialId, setCredentialId] = useState('');
   const { data, isError, isLoading } = useFetchCredentials();
   const { data: credentialContent } = useFetchCredentialContent(credentialId);
-  const { data: wallets } = useFetchWallets();
 
   return (
     <div className="mt-2">
       <h3>Idos</h3>
-      <h4 className="my-4 font-medium">Wallets</h4>
-      {wallets?.map((wallet) => (
-        <div key={wallet.id}>
-          <p>
-            <span>Id: </span>
-            {wallet.id}
-          </p>
-          <p>
-            <span>Address: </span>
-            {wallet.address}
-          </p>
-        </div>
-      ))}
       <h4 className="mt-6 font-medium">Credentials</h4>
       {data?.map((credential) => (
         <div key={credential.id} className="flex flex-col gap-2 py-4">

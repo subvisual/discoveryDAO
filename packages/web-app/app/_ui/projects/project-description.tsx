@@ -28,7 +28,7 @@ export const ProjectDescription = () => {
         A Polkadot-native token launch platform, by and for the community
       </p>
       <p>{data}</p>
-      <div className="border-white-anti-flash mb-9 mt-12 border-t" />
+      <div className="mb-9 mt-12 border-t border-white-anti-flash" />
       <h3 className="mb-8">Description</h3>
       <p>
         Citizend brings top projects and contributors together to equitably
