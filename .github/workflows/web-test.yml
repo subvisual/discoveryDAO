@@ -1,4 +1,4 @@
-name: Web - Test Suite
+name: Web-app - Test Suite
 
 on:
   pull_request:
@@ -21,8 +21,8 @@ jobs:
       - name: Setup node
         uses: actions/setup-node@v2
         with:
-          node-version: '20.11.1'
-          registry-url: 'https://npm.pkg.github.com'
+          node-version: "20.11.1"
+          registry-url: "https://npm.pkg.github.com"
 
       - name: Setup module dependencies cache
         uses: actions/cache@v2
@@ -31,16 +31,13 @@ jobs:
           key: ${{ runner.os }}-modules-${{ hashFiles('**/yarn.lock') }}
 
       - name: Install module dependencies
-        run:  yarn install --frozen-lockfile
+        run: yarn install --frozen-lockfile
 
-      - name: Lint javascript
-        run: yarn workspace @discovery-dao/web lint:js
-
-      - name: Lint styles
-        run: yarn workspace @discovery-dao/web lint:styles
+      - name: Lint next
+        run: yarn workspace @discovery-dao/web-app lint:next
 
       - name: Lint types
-        run: yarn workspace @discovery-dao/web lint:types
-      
+        run: yarn workspace @discovery-dao/web-app lint:tsc
+
       - name: Build
-        run: yarn workspace @discovery-dao/web build
+        run: yarn workspace @discovery-dao/web-app build
