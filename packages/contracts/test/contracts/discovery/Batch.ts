@@ -21,6 +21,7 @@ import {
 
 import { goToTime, currentTimestamp } from "../../timeHelpers";
 import { registerProject, makeProjectReady, setUpBatch } from "./helpers";
+import { BytesLike } from "ethers";
 
 const { parseUnits, formatBytes32String } = ethers.utils;
 
@@ -32,7 +33,6 @@ describe("Batch", () => {
 
   let batch: Batch;
   let controller: Controller;
-  let registry: FractalRegistry;
   let citizend: Citizend;
   let staking: Staking;
   let projectToken: MockERC20;
@@ -42,6 +42,9 @@ describe("Batch", () => {
   let oneDay: number;
   let votingStart: number;
   let votingEnd: number;
+  let merkleRoot: BytesLike;
+  let aliceMerkleProof: BytesLike[];
+  let bobMerkleProof: BytesLike[];
 
   beforeEach(async () => {
     [owner, alice, bob, carol] = await ethers.getSigners();
@@ -53,14 +56,23 @@ describe("Batch", () => {
       "ProjectToken",
       18
     );
+    merkleRoot =
+      "0xa5c09e2a9128afef7246a5900cfe02c4bd2cfcac8ac4286f0159a699c8455a49";
+    aliceMerkleProof = [
+      "0xe9707d0e6171f728f7473c24cc0432a9b07eaaf1efed6a137a4a8c12c79552d9",
+      "0x347dce04eb339ca70588960730ef0cada966bb1d5e10a9b9489a3e0ba47dc1b6",
+    ];
+    bobMerkleProof = [
+      "0x8a3552d60a98e0ade765adddad0a2e420ca9b1eef5f326ba7ab860bb4ea72c94",
+      "0x070e8db97b197cc0e4a1790c5e6c3667bab32d733db7f815fbe84f5824c7168d",
+    ];
 
-    registry = await new FractalRegistry__factory(owner).deploy(owner.address);
     citizend = await new Citizend__factory(owner).deploy(owner.address);
     staking = await new Staking__factory(owner).deploy(citizend.address);
     controller = await new Controller__factory(owner).deploy(
-      registry.address,
       staking.address,
-      citizend.address
+      citizend.address,
+      merkleRoot
     );
     aUSD = await new MockERC20__factory(owner).deploy("aUSD", "aUSD", 12);
 
@@ -80,8 +92,6 @@ describe("Batch", () => {
       owner
     );
 
-    await registry.addUserAddress(alice.address, formatBytes32String("id1"));
-    await registry.addUserAddress(bob.address, formatBytes32String("id2"));
     await citizend.transfer(alice.address, 1000);
     await citizend.transfer(bob.address, 1000);
 
@@ -180,7 +190,7 @@ describe("Batch", () => {
 
   describe("vote", () => {
     it("allows a user to vote", async () => {
-      await batch.connect(alice).vote(fakeProject.address);
+      await batch.connect(alice).vote(fakeProject.address, aliceMerkleProof);
 
       expect(await batch.userVoteCount(alice.address)).to.eq(1);
       expect(await batch.projectVoteCount(fakeProject.address)).to.eq(1);
@@ -190,10 +200,10 @@ describe("Batch", () => {
     });
 
     it("does not allow a user to vote twice in the same project", async () => {
-      await batch.connect(alice).vote(fakeProject.address);
+      await batch.connect(alice).vote(fakeProject.address, aliceMerkleProof);
 
       await expect(
-        batch.connect(alice).vote(fakeProject.address)
+        batch.connect(alice).vote(fakeProject.address, aliceMerkleProof)
       ).to.be.revertedWith("already voted in this project");
     });
 
@@ -226,10 +236,10 @@ describe("Batch", () => {
       );
       await goToTime(votingStart + oneDay);
 
-      await batch.connect(alice).vote(fakeProject.address);
+      await batch.connect(alice).vote(fakeProject.address, aliceMerkleProof);
 
       await expect(
-        batch.connect(alice).vote(anotherFakeProject.address)
+        batch.connect(alice).vote(anotherFakeProject.address, aliceMerkleProof)
       ).to.be.revertedWith("vote limit reached");
     });
 
@@ -248,7 +258,7 @@ describe("Batch", () => {
       );
 
       await expect(
-        batch.connect(alice).vote(newProject.address)
+        batch.connect(alice).vote(newProject.address, aliceMerkleProof)
       ).to.be.revertedWith("voting period not set");
     });
 
@@ -256,15 +266,13 @@ describe("Batch", () => {
       await citizend.transfer(carol.address, 1000);
 
       await expect(
-        batch.connect(carol).vote(fakeProject.address)
+        batch.connect(carol).vote(fakeProject.address, aliceMerkleProof)
       ).to.be.revertedWith("not allowed to vote");
     });
 
     it("does not allow a user not belonging to the DAO to vote", async () => {
-      await registry.addUserAddress(carol.address, formatBytes32String("id3"));
-
       await expect(
-        batch.connect(carol).vote(fakeProject.address)
+        batch.connect(carol).vote(fakeProject.address, aliceMerkleProof)
       ).to.be.revertedWith("not allowed to vote");
     });
   });
@@ -277,9 +285,11 @@ describe("Batch", () => {
     });
 
     it("takes the votes into account", async () => {
-      await batch.connect(alice).vote(fakeProject.address);
-      await batch.connect(bob).vote(fakeProject.address);
-      await batch.connect(alice).vote(anotherFakeProject.address);
+      await batch.connect(alice).vote(fakeProject.address, aliceMerkleProof);
+      await batch.connect(bob).vote(fakeProject.address, bobMerkleProof);
+      await batch
+        .connect(alice)
+        .vote(anotherFakeProject.address, aliceMerkleProof);
       await goToTime(votingStart + 5 * oneDay);
 
       const status = await batch.getProjectStatus(fakeProject.address);
@@ -298,7 +308,7 @@ describe("Batch", () => {
 
   describe("getCurrentWinners", () => {
     it("calculates the winner if one exists", async () => {
-      await batch.connect(alice).vote(fakeProject.address);
+      await batch.connect(alice).vote(fakeProject.address, aliceMerkleProof);
 
       await goToTime(votingStart + 5 * oneDay);
       const winners = await batch.getCurrentWinners();
@@ -307,9 +317,11 @@ describe("Batch", () => {
     });
 
     it("calculates the winners of multiple slots", async () => {
-      await batch.connect(alice).vote(fakeProject.address);
-      await batch.connect(bob).vote(fakeProject.address);
-      await batch.connect(alice).vote(anotherFakeProject.address);
+      await batch.connect(alice).vote(fakeProject.address, aliceMerkleProof);
+      await batch.connect(bob).vote(fakeProject.address, bobMerkleProof);
+      await batch
+        .connect(alice)
+        .vote(anotherFakeProject.address, aliceMerkleProof);
 
       await goToTime(votingStart + 5 * oneDay);
       let winners = await batch.getCurrentWinners();
@@ -327,14 +339,16 @@ describe("Batch", () => {
     });
 
     it("calculates the winners of multiple slots with votes in multiple slots", async () => {
-      await batch.connect(alice).vote(fakeProject.address);
-      await batch.connect(bob).vote(fakeProject.address);
-      await batch.connect(alice).vote(anotherFakeProject.address);
+      await batch.connect(alice).vote(fakeProject.address, aliceMerkleProof);
+      await batch.connect(bob).vote(fakeProject.address, bobMerkleProof);
+      await batch
+        .connect(alice)
+        .vote(anotherFakeProject.address, aliceMerkleProof);
 
       await goToTime(votingStart + 5 * oneDay);
       let winners = await batch.getCurrentWinners();
 
-      await batch.connect(bob).vote(anotherFakeProject.address);
+      await batch.connect(bob).vote(anotherFakeProject.address, bobMerkleProof);
       expect(winners.length).to.eq(1);
       expect(winners[0]).to.eq(fakeProject.address);
 
@@ -348,9 +362,11 @@ describe("Batch", () => {
     });
 
     it("works even when it doesn't actually have to calculate anything", async () => {
-      await batch.connect(alice).vote(fakeProject.address);
+      await batch.connect(alice).vote(fakeProject.address, aliceMerkleProof);
       await goToTime(votingStart + 5 * oneDay);
-      await batch.connect(alice).vote(anotherFakeProject.address);
+      await batch
+        .connect(alice)
+        .vote(anotherFakeProject.address, aliceMerkleProof);
 
       let winners = await batch.getCurrentWinners();
 
@@ -369,8 +385,8 @@ describe("Batch", () => {
 
   describe("projectVoteCount", () => {
     it("counts 1 vote per project, linearly", async () => {
-      await batch.connect(alice).vote(fakeProject.address);
-      await batch.connect(bob).vote(fakeProject.address);
+      await batch.connect(alice).vote(fakeProject.address, aliceMerkleProof);
+      await batch.connect(bob).vote(fakeProject.address, bobMerkleProof);
 
       expect(await batch.projectVoteCount(fakeProject.address)).to.eq(2);
     });
@@ -379,14 +395,14 @@ describe("Batch", () => {
   describe("weightedProjectVoteCount", () => {
     it("gives more weight to early votes, following a linear curve", async () => {
       await goToTime(votingStart + oneDay);
-      await batch.connect(alice).vote(fakeProject.address);
+      await batch.connect(alice).vote(fakeProject.address, aliceMerkleProof);
 
       expect(
         await batch.weightedProjectVoteCount(fakeProject.address)
       ).to.be.closeTo(parseUnits("0.045"), parseUnits("0.0001"));
 
       await goToTime(votingStart + 4 * oneDay);
-      await batch.connect(bob).vote(fakeProject.address);
+      await batch.connect(bob).vote(fakeProject.address, bobMerkleProof);
 
       expect(
         await batch.weightedProjectVoteCount(fakeProject.address)

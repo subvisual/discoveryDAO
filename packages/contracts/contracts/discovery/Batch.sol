@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity =0.8.12;
+pragma solidity ^0.8.20;
 
 import {ERC165Checker} from "@openzeppelin/contracts/utils/introspection/ERC165Checker.sol";
 
@@ -161,13 +161,13 @@ contract Batch is IBatch, ICommon, ProjectVoting {
         investmentEnd = votingPeriod.end + extraInvestmentDuration;
     }
 
-    function vote(address projectAddress)
+    function vote(address projectAddress, bytes32[] calldata _merkleProof)
         external
         votingPeriodIsSet
         inVotingPeriod
     {
         require(
-            IController(controller).canVote(msg.sender),
+            IController(controller).canVote(msg.sender, _merkleProof),
             "not allowed to vote"
         );
 

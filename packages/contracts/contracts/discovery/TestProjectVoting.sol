@@ -1,9 +1,7 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity =0.8.12;
+pragma solidity ^0.8.20;
 
 import {ProjectVoting} from "./ProjectVoting.sol";
-
-import "hardhat/console.sol";
 
 contract TestProjectVoting is ProjectVoting {
     Period public votingPeriod;

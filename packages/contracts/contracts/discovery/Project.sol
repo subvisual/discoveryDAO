@@ -1,8 +1,9 @@
 // SPDX-License-Identifier: MIT
-pragma solidity =0.8.12;
+pragma solidity ^0.8.20;
 
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import {ERC165} from "@openzeppelin/contracts/utils/introspection/ERC165.sol";
+import {MerkleProof} from "@openzeppelin/contracts/utils/cryptography/MerkleProof.sol";
 
 import {IController} from "./interfaces/IController.sol";
 import {IProject} from "./interfaces/IProject.sol";
@@ -52,12 +53,18 @@ contract Project is IProject, ERC165 {
     // has the project been approved by the legal team
     bool public override(IProject) approvedByLegal;
 
+    // Merkle root for contributions validation
+    bytes32 public merkleRoot;
+
+    error InvalidLeaf();
+
     constructor(
         string memory _description,
         address _token,
         uint256 _saleSupply,
         uint256 _rate,
-        address _investmentToken
+        address _investmentToken,
+        bytes32 _merkleRoot
     ) {
         controller = msg.sender;
 
@@ -65,6 +72,7 @@ contract Project is IProject, ERC165 {
         token = _token;
         saleSupply = _saleSupply;
         rate = _rate;
+        merkleRoot = _merkleRoot;
 
         uint256 stakersPoolSupply = saleSupply / 2;
         uint256 peoplesPoolSupply = saleSupply - stakersPoolSupply;
@@ -97,13 +105,20 @@ contract Project is IProject, ERC165 {
         _;
     }
 
-    function invest(uint256 _peoplesAmount, uint256 _stakersAmount) external {
-        revert("not yet implemented");
-    }
-
     //
     // IProject
     //
+
+    /// @inheritdoc IProject
+    function invest(
+        uint256 _peoplesAmount,
+        uint256 _stakersAmount,
+        bytes32[] calldata _merkleProof
+    ) public override(IProject) {
+        bytes32 leaf = keccak256(abi.encodePacked(msg.sender));
+        bool isValidLeaf = MerkleProof.verify(_merkleProof, merkleRoot, leaf);
+        if (!isValidLeaf) revert InvalidLeaf();
+    }
 
     /// @inheritdoc IProject
     function approveByManager()

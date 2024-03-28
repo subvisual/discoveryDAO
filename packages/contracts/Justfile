@@ -47,7 +47,7 @@ eth:
   # just test
   sleep 0.2 && just eth-deploy &
   just wagmi &
-  anvil --host 0.0.0.0
+  anvil --code-size-limit 100000 --host 0.0.0.0
 
 build-contracts:
   forge build
@@ -63,6 +63,7 @@ wagmi:
 # restart `just eth` when contracts change
 eth-watch:
   watchexec \
+    --project-origin . \
     --watch contracts \
     --watch test \
     --watch foundry.toml \
@@ -79,6 +80,7 @@ forge-script script:
   forge script \
     $1 \
     --fork-url http://localhost:8545 \
+    --code-size-limit 100000 \
     --broadcast \
     --mnemonics "{{ mnemonic }}" \
     --sender "{{ sender }}" \

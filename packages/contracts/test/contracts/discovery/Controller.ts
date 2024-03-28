@@ -11,8 +11,6 @@ import {
   Project__factory,
   MockERC20,
   MockERC20__factory,
-  FractalRegistry,
-  FractalRegistry__factory,
   Citizend,
   Citizend__factory,
   Staking,
@@ -20,6 +18,7 @@ import {
 } from "../../../src/types";
 
 import { registerProject, makeProjectReady, setUpBatch } from "./helpers";
+import { BytesLike } from "ethers";
 
 const { parseUnits, formatBytes32String } = ethers.utils;
 const { MaxUint256 } = ethers.constants;
@@ -33,14 +32,14 @@ describe("Controller", () => {
   let project: Project;
   let projectToken: MockERC20;
   let aUSD: MockERC20;
-  let registry: FractalRegistry;
   let citizend: Citizend;
   let staking: Staking;
+  let merkleRoot: BytesLike;
+  let aliceMerkleProof: BytesLike[];
 
   beforeEach(async () => {
     [owner, alice, bob] = await ethers.getSigners();
 
-    registry = await new FractalRegistry__factory(owner).deploy(owner.address);
     citizend = await new Citizend__factory(owner).deploy(owner.address);
     staking = await new Staking__factory(owner).deploy(citizend.address);
     aUSD = await new MockERC20__factory(owner).deploy("aUSD", "aUSD", 12);
@@ -49,17 +48,22 @@ describe("Controller", () => {
       "ProjectToken",
       18
     );
+    merkleRoot =
+      "0xa5c09e2a9128afef7246a5900cfe02c4bd2cfcac8ac4286f0159a699c8455a49";
+    aliceMerkleProof = [
+      "0xe9707d0e6171f728f7473c24cc0432a9b07eaaf1efed6a137a4a8c12c79552d9",
+      "0x347dce04eb339ca70588960730ef0cada966bb1d5e10a9b9489a3e0ba47dc1b6",
+    ];
 
     controller = await new Controller__factory(owner).deploy(
-      registry.address,
       staking.address,
-      citizend.address
+      citizend.address,
+      merkleRoot
     );
   });
 
   describe("constructor", () => {
     it("sets the correct params", async () => {
-      expect(await controller.registry()).to.eq(registry.address);
       expect(await controller.staking()).to.eq(staking.address);
       expect(await controller.token()).to.eq(citizend.address);
       expect(
@@ -68,18 +72,20 @@ describe("Controller", () => {
           owner.address
         )
       ).to.be.true;
+      expect(await controller.merkleRoot()).to.eq(merkleRoot);
     });
   });
 
   describe("canInvestInStakersPool", () => {
     it("is true if the user meets all the requirements", async () => {
-      await registry.addUserAddress(alice.address, formatBytes32String("id1"));
       await citizend.transfer(alice.address, 1000);
       await citizend.connect(alice).approve(staking.address, MaxUint256);
       await staking.connect(alice).stake(100);
       project = await registerProject(owner, projectToken, controller, aUSD);
 
-      expect(await controller.canInvestInStakersPool(alice.address)).to.be.true;
+      expect(
+        await controller.canInvestInStakersPool(alice.address, aliceMerkleProof)
+      ).to.be.true;
     });
 
     it("is false if the user does not have the KYC", async () => {
@@ -88,39 +94,42 @@ describe("Controller", () => {
       await staking.connect(alice).stake(100);
       project = await registerProject(owner, projectToken, controller, aUSD);
 
-      expect(await controller.canInvestInStakersPool(alice.address)).to.be
+      expect(await controller.canInvestInStakersPool(alice.address, [])).to.be
         .false;
     });
 
     it("is false if the user does not belong to the DAO", async () => {
-      await registry.addUserAddress(alice.address, formatBytes32String("id1"));
       project = await registerProject(owner, projectToken, controller, aUSD);
 
-      expect(await controller.canInvestInStakersPool(alice.address)).to.be
-        .false;
+      expect(
+        await controller.canInvestInStakersPool(alice.address, aliceMerkleProof)
+      ).to.be.false;
     });
 
     it("is false if the user does not have staked tokens", async () => {
-      await registry.addUserAddress(alice.address, formatBytes32String("id1"));
       await citizend.transfer(alice.address, 1000);
       project = await registerProject(owner, projectToken, controller, aUSD);
 
-      expect(await controller.canInvestInStakersPool(alice.address)).to.be
-        .false;
+      expect(
+        await controller.canInvestInStakersPool(alice.address, aliceMerkleProof)
+      ).to.be.false;
     });
   });
 
   describe("canInvestInPeoplesPool", () => {
     it("is true if the user meets all the requirements", async () => {
-      await registry.addUserAddress(alice.address, formatBytes32String("id1"));
       await citizend.transfer(alice.address, 1000);
       project = await registerProject(owner, projectToken, controller, aUSD);
       await makeProjectReady(project, projectToken);
       const batch: Batch = await setUpBatch(controller, [project], owner);
-      await batch.connect(alice).vote(project.address);
+      await batch.connect(alice).vote(project.address, aliceMerkleProof);
 
       expect(
-        await controller.canInvestInPeoplesPool(project.address, alice.address)
+        await controller.canInvestInPeoplesPool(
+          project.address,
+          alice.address,
+          aliceMerkleProof
+        )
       ).to.be.true;
     });
 
@@ -131,30 +140,40 @@ describe("Controller", () => {
       const batch: Batch = await setUpBatch(controller, [project], owner);
 
       expect(
-        await controller.canInvestInPeoplesPool(project.address, alice.address)
+        await controller.canInvestInPeoplesPool(
+          project.address,
+          alice.address,
+          aliceMerkleProof
+        )
       ).to.be.false;
     });
 
     it("is false if the user does not belong to the DAO", async () => {
-      await registry.addUserAddress(alice.address, formatBytes32String("id1"));
       project = await registerProject(owner, projectToken, controller, aUSD);
       await makeProjectReady(project, projectToken);
       const batch: Batch = await setUpBatch(controller, [project], owner);
 
       expect(
-        await controller.canInvestInPeoplesPool(project.address, alice.address)
+        await controller.canInvestInPeoplesPool(
+          project.address,
+          alice.address,
+          aliceMerkleProof
+        )
       ).to.be.false;
     });
 
     it("is false if the user hasn't voted in the project", async () => {
       await citizend.transfer(alice.address, 1000);
-      await registry.addUserAddress(alice.address, formatBytes32String("id1"));
       project = await registerProject(owner, projectToken, controller, aUSD);
       await makeProjectReady(project, projectToken);
       await setUpBatch(controller, [project], owner);
 
       expect(
-        await controller.canInvestInPeoplesPool(project.address, alice.address)
+        await controller.canInvestInPeoplesPool(
+          project.address,
+          alice.address,
+          aliceMerkleProof
+        )
       ).to.be.false;
     });
   });

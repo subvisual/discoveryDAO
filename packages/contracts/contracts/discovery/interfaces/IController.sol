@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity =0.8.12;
+pragma solidity ^0.8.20;
 
 import {IBatch} from "./IBatch.sol";
 
@@ -51,16 +51,23 @@ interface IController {
         returns (bool);
 
     /// Checks if a user can invest in the staker's pool of a project
-    function canInvestInStakersPool(address _user) external view returns (bool);
+    function canInvestInStakersPool(
+        address _user,
+        bytes32[] calldata _merkleProof
+    ) external view returns (bool);
 
     /// Checks if a user can invest in the people's pool of a project
-    function canInvestInPeoplesPool(address _project, address _user)
+    function canInvestInPeoplesPool(
+        address _project,
+        address _user,
+        bytes32[] calldata _merkleProof
+    ) external view returns (bool);
+
+    /// Checks if a user can vote
+    function canVote(address _user, bytes32[] calldata _merkleProof)
         external
         view
         returns (bool);
-
-    /// Checks if a user can vote
-    function canVote(address _user) external view returns (bool);
 
     /// Sets the voting period for a Batch
     function setBatchVotingPeriod(

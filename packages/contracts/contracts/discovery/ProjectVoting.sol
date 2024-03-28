@@ -1,10 +1,8 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity =0.8.12;
+pragma solidity ^0.8.20;
 
 import {ICommon} from "./interfaces/ICommon.sol";
 import {Math} from "../libraries/Math.sol";
-
-import "hardhat/console.sol";
 
 abstract contract ProjectVoting is ICommon {
     enum ProjectStatus {

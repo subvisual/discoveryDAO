@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity =0.8.12;
+pragma solidity ^0.8.20;
 
 interface IProject {
     /// Approval function from an eligible project manager
@@ -25,7 +25,11 @@ interface IProject {
 
     function peoplesPool() external view returns (address);
 
-    function invest(uint256 _peoplesAmount, uint256 _stakersAmount) external;
+    function invest(
+        uint256 _peoplesAmount,
+        uint256 _stakersAmount,
+        bytes32[] calldata _merkleProof
+    ) external;
 
     function investmentTokenToToken(uint256 _amount)
         external

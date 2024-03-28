@@ -1,9 +1,10 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity ^0.8.12;
+pragma solidity ^0.8.20;
 
 import {Script} from "lib/forge-std/src/Script.sol";
 
 import {Citizend} from "contracts/token/Citizend.sol";
+import {Controller} from "contracts/discovery/Controller.sol";
 import {Staking} from "contracts/discovery/Staking.sol";
 import {Project} from "contracts/discovery/Project.sol";
 
@@ -24,10 +25,14 @@ contract DevDeployScript is Script {
     function run() public {
       vm.startBroadcast();
 
+      bytes32 merkleRoot = 0xa5c09e2a9128afef7246a5900cfe02c4bd2cfcac8ac4286f0159a699c8455a49;
+
       Citizend citizend = new Citizend(alice);
       Staking staking = new Staking(address(citizend));
 
-      Project project = new Project("token sale project", address(citizend), 1000, 1, address(0));
+      Controller controller = new Controller(address(staking), address(citizend), merkleRoot);
+
+      Project project = new Project("token sale project", address(citizend), 1000, 1, address(0), merkleRoot);
 
       for (uint256 i; i < testAccounts.length; i++) {
         address addr = testAccounts[i];

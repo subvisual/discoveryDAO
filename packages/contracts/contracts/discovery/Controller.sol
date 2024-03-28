@@ -1,10 +1,11 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity =0.8.12;
+pragma solidity ^0.8.20;
 
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import {ERC165} from "@openzeppelin/contracts/utils/introspection/ERC165.sol";
 import {AccessControl} from "@openzeppelin/contracts/access/AccessControl.sol";
 import {SafeERC20} from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
+import {MerkleProof} from "@openzeppelin/contracts/utils/cryptography/MerkleProof.sol";
 
 import {IController} from "./interfaces/IController.sol";
 import {IProject} from "./interfaces/IProject.sol";
@@ -12,7 +13,6 @@ import {IBatch} from "./interfaces/IBatch.sol";
 import {IStaking} from "./interfaces/IStaking.sol";
 import {Project} from "./Project.sol";
 import {Batch} from "./Batch.sol";
-import {FractalRegistry} from "../fractal_registry/FractalRegistry.sol";
 
 contract Controller is IController, ERC165, AccessControl {
     using SafeERC20 for IERC20;
@@ -47,20 +47,20 @@ contract Controller is IController, ERC165, AccessControl {
     // CTND staking contract
     address public staking;
 
-    // Fractal Registry contract
-    address public registry;
-
     // CTND token contract
     address public token;
 
+    // Merkle root to pass to the projects
+    bytes32 public merkleRoot;
+
     constructor(
-        address _registry,
         address _staking,
-        address _token
+        address _token,
+        bytes32 _merkleRoot
     ) {
-        registry = _registry;
         staking = _staking;
         token = _token;
+        merkleRoot = _merkleRoot;
 
         _grantRole(DEFAULT_ADMIN_ROLE, msg.sender);
         _grantRole(PROJECT_MANAGER_ROLE, msg.sender);
@@ -85,7 +85,8 @@ contract Controller is IController, ERC165, AccessControl {
             _token,
             _saleSupply,
             _rate,
-            _investmentToken
+            _investmentToken,
+            merkleRoot
         );
 
         emit ProjectRegistered(address(project));
@@ -128,40 +129,37 @@ contract Controller is IController, ERC165, AccessControl {
     }
 
     /// @inheritdoc IController
-    function canInvestInStakersPool(address _user)
-        external
-        view
-        override(IController)
-        returns (bool)
-    {
+    function canInvestInStakersPool(
+        address _user,
+        bytes32[] calldata _merkleProof
+    ) external view override(IController) returns (bool) {
         return
-            _hasKYC(_user) &&
+            _hasKYC(_user, _merkleProof) &&
             _belongsToDAO(_user) &&
             IStaking(staking).hasStaked(_user);
     }
 
     /// @inheritdoc IController
-    function canInvestInPeoplesPool(address _project, address _user)
-        external
-        view
-        override(IController)
-        returns (bool)
-    {
+    function canInvestInPeoplesPool(
+        address _project,
+        address _user,
+        bytes32[] calldata _merkleProof
+    ) external view override(IController) returns (bool) {
         Batch batch = Batch(projectsToBatches[_project]);
 
         return
-            _hasKYC(_user) &&
+            _hasKYC(_user, _merkleProof) &&
             _belongsToDAO(_user) &&
             batch.userHasVotedForProject(_project, _user);
     }
 
-    function canVote(address _user)
+    function canVote(address _user, bytes32[] calldata _merkleProof)
         external
         view
         override(IController)
         returns (bool)
     {
-        return _hasKYC(_user) && _belongsToDAO(_user);
+        return _hasKYC(_user, _merkleProof) && _belongsToDAO(_user);
     }
 
     /// @inheritdoc IController
@@ -174,9 +172,15 @@ contract Controller is IController, ERC165, AccessControl {
         Batch(batch).setVotingPeriod(start, end, extraInvestmentDuration);
     }
 
-    function _hasKYC(address _user) internal view returns (bool) {
-        bytes32 fractalId = FractalRegistry(registry).getFractalId(_user);
-        return fractalId != 0;
+    function _hasKYC(address _user, bytes32[] calldata _merkleProof)
+        internal
+        view
+        returns (bool)
+    {
+        bytes32 leaf = keccak256(abi.encodePacked(_user));
+        bool isValid = MerkleProof.verify(_merkleProof, merkleRoot, leaf);
+
+        return isValid;
     }
 
     function _belongsToDAO(address _user) internal view returns (bool) {

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity =0.8.12;
+pragma solidity ^0.8.20;
 
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import {SafeERC20} from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
@@ -7,8 +7,6 @@ import {SafeERC20} from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol
 import {IPool} from "../interfaces/IPool.sol";
 import {IProject} from "../interfaces/IProject.sol";
 import {RisingTide} from "../../RisingTide/RisingTide.sol";
-
-import "hardhat/console.sol";
 
 /**
  * TODO users should be able to `buy` into the pool, as long as they meet the conditions
